@@ -9,6 +9,7 @@
   --cream: #e8ddc7;
   --rust: #c75539;
   --gold: #c6a05b;
+  --teal: #07b4c5;
   --sage: #879688;
   --line: rgba(36, 37, 31, 0.16);
   --serif: "DM Serif Display", Georgia, serif;
@@ -117,7 +118,7 @@ input:focus-visible {
 }
 
 .nav-links > a::after {
-  background: var(--rust);
+  background: var(--teal);
   bottom: -8px;
   content: "";
   height: 2px;
@@ -424,7 +425,7 @@ input:focus-visible {
 }
 
 .intro-strip svg {
-  color: var(--rust);
+  color: var(--teal);
   flex: 0 0 auto;
   height: 22px;
   width: 22px;
@@ -823,8 +824,8 @@ input:focus-visible {
 }
 
 .stepper button.active span {
-  background: var(--rust);
-  border-color: var(--rust);
+  background: var(--teal);
+  border-color: var(--teal);
   color: white;
 }
 
@@ -890,7 +891,7 @@ input:focus-visible {
 
 .booking-room-list button.selected {
   background: #f5eee1;
-  border-color: var(--rust);
+  border-color: var(--teal);
 }
 
 .booking-room-list img {
@@ -929,8 +930,8 @@ input:focus-visible {
 }
 
 .selected .radio-dot {
-  background: var(--rust);
-  border-color: var(--rust);
+  background: var(--teal);
+  border-color: var(--teal);
   color: white;
 }
 
@@ -993,8 +994,8 @@ input:focus-visible {
 
 .slot-grid button:hover,
 .slot-grid button.selected {
-  border-color: var(--rust);
-  color: var(--rust);
+  border-color: var(--teal);
+  color: var(--teal);
 }
 
 .slot-grid button.selected {
@@ -1447,7 +1448,7 @@ input:focus-visible {
 }
 
 .contact-links svg {
-  color: var(--rust);
+  color: var(--teal);
 }
 
 .contact-links span {
@@ -1578,7 +1579,7 @@ input:focus-visible {
 }
 
 .footer-ticket svg {
-  color: var(--gold);
+  color: var(--teal);
 }
 
 .footer-ticket span {
