@@ -105,6 +105,7 @@ function HomePage() {
   const [time, setTime] = useState('')
   const [players, setPlayers] = useState(3)
   const [firstName, setFirstName] = useState('')
+  const [frontReview, setFrontReview] = useState<number | null>(null)
 
   const minDate = useMemo(
     () =>
@@ -417,7 +418,19 @@ function HomePage() {
         </div>
         <div className="review-stack">
           {reviews.map((review, index) => (
-            <blockquote key={review.name} className={`review-card review-${index + 1}`}>
+            <blockquote
+              key={review.name}
+              className={`review-card review-${index + 1}${frontReview === index ? ' review-front' : ''}`}
+              onClick={() => setFrontReview(index)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  setFrontReview(index)
+                }
+              }}
+            >
               <span className="quote-mark">“</span>
               <p>{review.quote}</p>
               <footer><strong>{review.name}</strong><span>{review.detail}</span></footer>

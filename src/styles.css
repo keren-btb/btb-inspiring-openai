@@ -218,7 +218,7 @@ input:focus-visible {
 }
 
 .eyebrow span {
-  background: var(--rust);
+  background: var(--teal);
   display: inline-block;
   height: 2px;
   width: 32px;
@@ -251,7 +251,12 @@ input:focus-visible {
 }
 
 .hero h1 em,
-.section-heading h2 em,
+.section-heading h2 em {
+  color: var(--rust);
+  display: block;
+  font-weight: 400;
+}
+
 .experience-copy h2 em,
 .booking-heading h2 em,
 .reviews-heading h2 em,
@@ -524,6 +529,7 @@ input:focus-visible {
   filter: saturate(0.82);
   height: 100%;
   object-fit: cover;
+  object-position: center top;
   transition: transform 600ms cubic-bezier(.2,.7,.2,1), filter 300ms ease;
   width: 100%;
 }
@@ -1364,10 +1370,20 @@ input:focus-visible {
   background: var(--paper);
   border: 1px solid var(--line);
   box-shadow: 0 20px 50px rgba(36, 37, 31, .08);
+  cursor: pointer;
   margin: 0;
   padding: 42px;
   position: absolute;
+  transition: transform 220ms ease, box-shadow 220ms ease;
   width: min(480px, 72%);
+}
+
+.review-card:hover {
+  box-shadow: 0 26px 58px rgba(36, 37, 31, .13);
+}
+
+.review-card.review-front {
+  z-index: 10 !important;
 }
 
 .review-card p {
