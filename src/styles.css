@@ -256,7 +256,7 @@ input:focus-visible {
 .booking-heading h2 em,
 .reviews-heading h2 em,
 .visit-main h2 em {
-  color: var(--rust);
+  color: var(--teal);
   display: block;
   font-weight: 400;
 }
@@ -282,13 +282,13 @@ input:focus-visible {
 }
 
 .button.primary {
-  background: var(--rust);
+  background: var(--teal);
   color: #fffaf0;
-  box-shadow: 0 12px 30px rgba(74, 24, 13, 0.2);
+  box-shadow: 0 12px 30px rgba(7, 132, 145, 0.25);
 }
 
 .button.primary:hover:not(:disabled) {
-  background: #b84830;
+  background: #068fa0;
 }
 
 .button:disabled {

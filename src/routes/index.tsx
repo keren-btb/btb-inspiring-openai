@@ -24,6 +24,10 @@ export const Route = createFileRoute('/')({
   component: HomePage,
 })
 
+// Prefixes public asset paths with the site's base path (set in vite.config.ts),
+// so images resolve correctly whether the site is hosted at a domain root or a subfolder.
+const asset = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
+
 const rooms = [
   {
     id: 'sherlock',
@@ -35,7 +39,7 @@ const rooms = [
     minPlayers: 3,
     maxPlayers: 7,
     duration: 60,
-    image: '/images/sherlock.jpg',
+    image: asset('/images/sherlock.jpg'),
     accent: '#d05238',
     code: 'BTB-01',
   },
@@ -49,7 +53,7 @@ const rooms = [
     minPlayers: 3,
     maxPlayers: 8,
     duration: 60,
-    image: '/images/christmas.jpg',
+    image: asset('/images/christmas.jpg'),
     accent: '#55715c',
     code: 'BTB-02',
   },
@@ -63,7 +67,7 @@ const rooms = [
     minPlayers: 3,
     maxPlayers: 5,
     duration: 45,
-    image: '/images/gregg.jpg',
+    image: asset('/images/gregg.jpg'),
     accent: '#b78b3d',
     code: 'BTB-03',
   },
@@ -134,7 +138,7 @@ function HomePage() {
     <main>
       <nav className="site-nav" aria-label="Main navigation">
         <a className="brand" href="#top" aria-label="Beyond the Box home">
-          <img src="/images/btb-logo.png" alt="" />
+          <img src={asset('/images/btb-logo.png')} alt="" />
           <span>
             <strong>Beyond the Box</strong>
             <small>Escape Rooms · Hastings</small>
@@ -251,7 +255,7 @@ function HomePage() {
 
       <section className="experience-section" id="experience">
         <div className="experience-photo">
-          <img src="/images/experience.jpg" alt="Players enjoying a Beyond the Box experience" />
+          <img src={asset('/images/experience.jpg')} alt="Players enjoying a Beyond the Box experience" />
           <div className="photo-note">
             <Puzzle size={20} />
             <span><strong>Made here</strong>Original rooms. Local minds.</span>
@@ -443,7 +447,7 @@ function HomePage() {
       </section>
 
       <footer className="site-footer">
-        <div className="footer-brand"><img src="/images/btb-logo.png" alt="Beyond the Box" /><p>Original escape rooms, built with curiosity in Hastings, New Zealand.</p></div>
+        <div className="footer-brand"><img src={asset('/images/btb-logo.png')} alt="Beyond the Box" /><p>Original escape rooms, built with curiosity in Hastings, New Zealand.</p></div>
         <div><strong>Explore</strong><a href="#rooms">Escape rooms</a><a href="#experience">How it works</a><a href="#book">Book a session</a></div>
         <div><strong>Visit</strong><a href="#visit">Opening hours</a><a href="tel:0220537365">022 053 7365</a><a href="https://www.facebook.com/btbescaperooms" target="_blank" rel="noreferrer">Facebook</a></div>
         <div className="footer-ticket"><Ticket /><span><small>Room entry from</small><strong>$35</strong> per person</span></div>
