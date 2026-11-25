@@ -98,9 +98,9 @@ const cube = {
 const piratesCove = {
   id: 'pirates',
   name: 'Pirate’s Cove',
-  kicker: 'Party at your place',
+  kicker: 'Ahoy, treasure hunters',
   description:
-    'A locked pirate treasure chest packed with puzzles. Hire it for a pirate party at your own house and let the crew race to claim the treasure.',
+    'A locked pirate treasure chest packed with puzzles. Play it here at BtB, or hire it for a pirate party at your own house and let the crew race to claim the treasure.',
   durationText: '40–60 min',
   image: asset('/images/pirates-cove.jpg'),
   accent: '#c75539',
@@ -342,13 +342,13 @@ function HomePage() {
         <div className="section-heading">
           <div>
             <p className="eyebrow dark"><span /> Case files</p>
-            <h2>Pick your<br /><em>puzzle.</em></h2>
+            <h2>Pick your<br /><em>whole-room escape.</em></h2>
           </div>
           <p>Our rooms are set up and run by us here in Hastings, including Saving Christmas, which we designed and built from scratch. Expect hands-on puzzles, plenty of “aha!” moments and a friendly game master looking after you.</p>
         </div>
 
-        <div className="room-grid">
-          {rooms.map((room, index) => (
+        <div className="room-grid two">
+          {rooms.filter((r) => r.id !== 'gregg').map((room, index) => (
             <article className="room-card" key={room.id} style={{ '--room-accent': room.accent } as React.CSSProperties}>
               <div className="room-image-wrap">
                 <img src={room.image} alt={`${room.name} escape room`} />
@@ -385,15 +385,44 @@ function HomePage() {
         <div className="section-heading">
           <div>
             <p className="eyebrow dark"><span /> Escape rooms in a box</p>
-            <h2>Puzzles in<br /><em>a box.</em></h2>
+            <h2>Real escape rooms.<br /><em>Packed in a box.</em></h2>
           </div>
-          <p>A whole escape room packed into a single box or chest. Play The Cube here at Beyond the Box, or bring Pirate’s Cove home for a pirate party.</p>
+          <p>These are proper escape rooms, with a story, locks to crack and the clock ticking. The whole game just happens to fit inside a box or chest. Play them here at Beyond the Box, and Pirate’s Cove can come to your place too.</p>
         </div>
 
-        <div className="room-grid two">
+        <div className="room-grid">
+          {rooms.filter((r) => r.id === 'gregg').map((room) => (
+            <article className="room-card" key={room.id} style={{ '--room-accent': room.accent } as React.CSSProperties}>
+              <div className="room-image-wrap">
+                <img src={room.image} alt={`${room.name} escape room in a box`} />
+                <span className="open-stamp">Play at BtB</span>
+              </div>
+              <div className="room-card-body">
+                <p>{room.kicker}</p>
+                <h3>{room.name}</h3>
+                <div className="room-meta">
+                  <span><Clock3 size={15} /> {room.duration} min</span>
+                  <span><Users size={15} /> {room.players} players</span>
+                  <span><Ticket size={15} /> $35 pp</span>
+                </div>
+                <p className="room-description">{room.description}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRoom(room)
+                    setPlayers(Math.min(Math.max(players, room.minPlayers), room.maxPlayers))
+                    setStep(1)
+                    goToBooking()
+                  }}
+                >
+                  Book Gregg in the Box <ArrowRight size={17} />
+                </button>
+              </div>
+            </article>
+          ))}
           <article className="room-card" style={{ '--room-accent': cube.accent } as React.CSSProperties}>
             <div className="room-image-wrap">
-              <img src={cube.image} alt="The Cube portable escape game" />
+              <img src={cube.image} alt="The Cube escape room in a box" />
               <span className="open-stamp">Play at BtB</span>
             </div>
             <div className="room-card-body">
@@ -422,19 +451,19 @@ function HomePage() {
           <article className="room-card" style={{ '--room-accent': piratesCove.accent } as React.CSSProperties}>
             <div className="room-image-wrap">
               <img src={piratesCove.image} alt="Pirate’s Cove treasure chest escape game" />
-              <span className="open-stamp">Hire it for home</span>
+              <span className="open-stamp">At BtB or your place</span>
             </div>
             <div className="room-card-body">
               <p>{piratesCove.kicker}</p>
               <h3>{piratesCove.name}</h3>
               <div className="room-meta">
                 <span><Clock3 size={15} /> {piratesCove.durationText}</span>
-                <span><MapPin size={15} /> At your house</span>
+                <span><MapPin size={15} /> BtB or your house</span>
                 <span><Puzzle size={15} /> Pirate parties</span>
               </div>
               <p className="room-description">{piratesCove.description}</p>
               <a className="card-link" href="tel:0220537365">
-                Call to hire Pirate’s Cove <ArrowRight size={17} />
+                Call to book Pirate’s Cove <ArrowRight size={17} />
               </a>
             </div>
           </article>
