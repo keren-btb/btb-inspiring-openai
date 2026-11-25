@@ -1,0 +1,265 @@
+/* =====================================================================
+   FUN & QUIRKY THEME — only applies inside <main class="theme-fun">
+   (built with VITE_THEME=fun → /test/new-site/fun/). The default site is untouched.
+   Bright and playful, but tidy enough for workplaces booking team building.
+   ===================================================================== */
+
+.theme-fun {
+  --ink: #1e2350;
+  --forest: #1e2350;
+  --forest-deep: #161a3d;
+  --paper: #fff1d6;
+  --paper-light: #fffaf0;
+  --cream: #ffe3a3;
+  --rust: #ff5e5b;
+  --gold: #ffc23d;
+  --teal: #07b4c5;       /* BtB brand teal: the main colour */
+  --teal-dark: #057f8c;  /* teal for text on light backgrounds */
+  --teal-light: #c8f0f4;
+  --sage: #8fd3c6;
+  --line: rgba(30, 35, 80, 0.14);
+  --serif: "Fredoka", "Nunito", system-ui, sans-serif;
+  --sans: "Nunito", system-ui, sans-serif;
+  background: var(--paper-light);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+/* ---------- Type ---------- */
+.theme-fun h1,
+.theme-fun h2,
+.theme-fun h3,
+.theme-fun .section-heading h2,
+.theme-fun .experience-copy h2,
+.theme-fun .booking-heading h2,
+.theme-fun .reviews-heading h2,
+.theme-fun .visit-main h2,
+.theme-fun .vr-section h2 {
+  font-family: var(--serif);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+}
+.theme-fun h1 em,
+.theme-fun h2 em {
+  font-style: normal;
+  font-weight: 700;
+}
+.theme-fun .hero h1 { font-size: clamp(58px, 7.4vw, 116px); }
+.theme-fun .section-heading h2 em {
+  color: var(--teal-dark);
+  text-decoration: underline wavy var(--gold);
+  text-decoration-thickness: 5px;
+  text-underline-offset: 12px;
+  text-decoration-skip-ink: none;
+}
+.theme-fun .hero h1 em { color: var(--teal); }
+.theme-fun .experience-copy h2 em,
+.theme-fun .booking-heading h2 em,
+.theme-fun .reviews-heading h2 em,
+.theme-fun .visit-main h2 em,
+.theme-fun .vr-section h2 em { color: var(--teal); }
+.theme-fun .booking-heading h2 em,
+.theme-fun .reviews-heading h2 em { color: var(--teal-dark); }
+.theme-fun .room-card h3,
+.theme-fun .bg-shop-head h3 { font-weight: 700; }
+
+/* eyebrow: little pill instead of a line */
+.theme-fun .eyebrow { letter-spacing: 0.12em; font-weight: 800; }
+.theme-fun .eyebrow span {
+  background: var(--teal);
+  border-radius: 999px;
+  height: 10px;
+  width: 22px;
+  box-shadow: 14px 0 0 var(--teal), 28px 0 0 var(--gold);
+  margin-right: 28px;
+}
+
+/* ---------- Buttons ---------- */
+.theme-fun .button,
+.theme-fun .nav-book {
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--ink);
+  font-weight: 800;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.theme-fun .button:hover:not(:disabled),
+.theme-fun .nav-book:hover {
+  box-shadow: 7px 7px 0 var(--ink);
+  transform: translate(-3px, -3px);
+}
+.theme-fun .button.primary { background: var(--teal); color: var(--ink); }
+.theme-fun .button.primary:hover:not(:disabled) { background: #2cc4d3; }
+.theme-fun .button.cream { background: var(--paper-light); color: var(--ink); }
+.theme-fun .nav-book { background: var(--teal); color: var(--ink); padding: 10px 18px; }
+.theme-fun .hero .text-link { border-bottom: 3px solid var(--teal); }
+
+/* ---------- Nav & notice ---------- */
+.theme-fun .site-nav { background: rgba(255, 250, 240, 0.97); border-bottom: 3px solid var(--ink); }
+.theme-fun .demo-notice { background: var(--gold); border-bottom: 3px solid var(--ink); font-weight: 600; }
+
+/* ---------- Hero ---------- */
+.theme-fun .hero { background: var(--forest-deep); }
+.theme-fun .hero-photo { filter: saturate(1.1); }
+.theme-fun .hero-scrim {
+  background:
+    linear-gradient(90deg, #161a3d 0%, rgba(22, 26, 61, 0.96) 34%, rgba(22, 26, 61, 0.55) 62%, rgba(22, 26, 61, 0.05) 100%),
+    linear-gradient(0deg, rgba(22, 26, 61, 0.5), transparent 55%);
+}
+.theme-fun .hero-grid {
+  background-image:
+    radial-gradient(circle, rgba(7, 180, 197, 0.6) 2.5px, transparent 3px),
+    radial-gradient(circle, rgba(255, 194, 61, 0.35) 2.5px, transparent 3px);
+  background-position: 0 0, 36px 36px;
+  background-size: 72px 72px;
+}
+.theme-fun .hero-proof {
+  background: var(--paper-light);
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 6px 6px 0 var(--teal);
+  color: var(--ink);
+  transform: rotate(2deg);
+}
+.theme-fun .hero-proof p,
+.theme-fun .hero-proof strong { color: var(--ink); }
+.theme-fun .hero-proof small { color: #6a6d8a; }
+.theme-fun .hero-proof .stars { color: var(--gold); }
+
+.fun-sticker {
+  align-items: center;
+  animation: fun-wobble 4s ease-in-out infinite;
+  background: var(--teal);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 5px 5px 0 var(--ink);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 800;
+  height: 132px;
+  justify-content: center;
+  line-height: 1.15;
+  position: absolute;
+  right: clamp(24px, 9vw, 150px);
+  text-align: center;
+  top: 150px;
+  transform: rotate(10deg);
+  width: 132px;
+  z-index: 3;
+}
+.fun-sticker strong { font-family: var(--serif); font-size: 44px; line-height: 0.9; }
+@keyframes fun-wobble {
+  0%, 100% { transform: rotate(10deg); }
+  50% { transform: rotate(-4deg) scale(1.04); }
+}
+
+/* ---------- Intro strip: chunky stickers ---------- */
+.theme-fun .intro-strip { background: var(--teal); border-bottom: 3px solid var(--ink); border-top: 3px solid var(--ink); }
+.theme-fun .intro-strip > div { border-right: 3px dashed rgba(30, 35, 80, 0.25); }
+.theme-fun .intro-strip svg { color: var(--ink); }
+.theme-fun .intro-strip span { color: rgba(30, 35, 80, 0.75); font-weight: 700; }
+.theme-fun .intro-strip strong { color: var(--ink); font-family: var(--serif); font-size: 20px; }
+
+/* ---------- Who's it for ---------- */
+.fun-who { background: var(--paper-light); padding: 120px clamp(24px, 7vw, 110px) 40px; }
+.fun-who-grid {
+  display: grid;
+  gap: 26px;
+  grid-template-columns: repeat(4, 1fr);
+  margin: auto;
+  max-width: 1320px;
+}
+.fun-tile {
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 28px 24px;
+  transition: transform 200ms ease;
+}
+.fun-tile:hover { transform: rotate(0deg) translateY(-6px) !important; }
+.fun-tile svg { height: 34px; width: 34px; margin-bottom: 14px; }
+.fun-tile h3 { font-size: 26px; margin: 0 0 10px; }
+.fun-tile p { font-size: 15px; line-height: 1.6; margin: 0; }
+.fun-tile.t1 { background: var(--teal); transform: rotate(-1.5deg); }
+.fun-tile.t2 { background: #ffd9d3; transform: rotate(1.2deg); }
+.fun-tile.t3 { background: var(--teal-light); transform: rotate(-0.8deg); }
+.fun-tile.t4 { background: #fff1d6; transform: rotate(1.6deg); }
+
+/* ---------- Room cards: tilted stickers ---------- */
+.theme-fun .rooms-section { background: var(--paper-light); }
+.theme-fun .portable-section { background: var(--paper); }
+.theme-fun .room-card {
+  background: white;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  box-shadow: 8px 8px 0 var(--ink);
+}
+.theme-fun .room-grid .room-card:nth-child(odd) { transform: rotate(-1.2deg); }
+.theme-fun .room-grid .room-card:nth-child(even) { transform: rotate(1.2deg); }
+.theme-fun .room-grid .room-card:hover { transform: rotate(0deg) translateY(-8px); box-shadow: 12px 12px 0 var(--ink); }
+.theme-fun .room-image-wrap { border-bottom: 3px solid var(--ink); }
+.theme-fun .room-image-wrap img { filter: saturate(1.05); }
+.theme-fun .case-number { font-family: var(--serif); font-weight: 700; text-shadow: 3px 3px 0 var(--ink); }
+.theme-fun .open-stamp {
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 10px;
+  transform: rotate(-5deg);
+}
+.theme-fun .room-meta { border-top: 2px dashed var(--line); border-bottom: 2px dashed var(--line); }
+.theme-fun .room-card-body button,
+.theme-fun .card-link {
+  background: var(--teal);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 9px 16px;
+}
+.theme-fun .room-card-body button:hover,
+.theme-fun .card-link:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
+
+/* ---------- VR ---------- */
+.theme-fun .vr-section { background: var(--forest-deep); }
+.theme-fun .vr-price { border: 3px solid rgba(255, 250, 240, 0.85); border-radius: 22px; }
+.theme-fun .vr-price.featured { background: var(--teal); border-color: var(--teal); color: var(--ink); transform: rotate(2deg); }
+.theme-fun .vr-photo { border: 3px solid var(--teal); border-radius: 22px; box-shadow: 8px 8px 0 var(--gold); }
+
+/* ---------- Board games ---------- */
+.theme-fun .boardgames-section { background: var(--paper-light); }
+.theme-fun .bg-banner { border: 3px solid var(--ink); border-radius: 24px; box-shadow: 8px 8px 0 var(--ink); }
+.theme-fun .bg-shop { background: white; border: 3px solid var(--ink); border-radius: 24px; box-shadow: 8px 8px 0 var(--teal); }
+.theme-fun .bg-search { border: 2px solid var(--ink); border-radius: 999px; }
+.theme-fun .bg-list strong { color: var(--teal-dark); }
+.theme-fun .bg-shop-head small { color: var(--teal-dark); }
+.theme-fun .bg-wishlist { background: #fff1d6; border: 2px dashed var(--ink); border-radius: 16px; }
+.theme-fun .bg-wishlist svg { color: var(--rust); }
+.theme-fun .bg-more { background: var(--teal); border: 2px solid var(--ink); border-radius: 999px; padding: 8px 16px; }
+
+/* ---------- Experience, booking, reviews, visit ---------- */
+.theme-fun .experience-section { background: var(--forest); }
+.theme-fun .photo-note { border-radius: 16px; }
+.theme-fun .booking-section { background: var(--paper); }
+.theme-fun .booking-form,
+.theme-fun .live-ticket { border: 3px solid var(--ink); border-radius: 24px; box-shadow: 8px 8px 0 var(--ink); }
+.theme-fun .review-card { border: 3px solid var(--ink); border-radius: 22px; box-shadow: 6px 6px 0 var(--ink); }
+.theme-fun .quote-mark { color: var(--rust); }
+.theme-fun .hours-card { border-radius: 24px; border: 3px solid var(--teal); }
+.theme-fun .site-footer { border-top: 6px solid var(--teal); }
+
+/* ---------- Responsive & motion ---------- */
+@media (max-width: 1050px) {
+  .fun-who-grid { grid-template-columns: 1fr 1fr; }
+  .fun-sticker { display: none; }
+}
+@media (max-width: 560px) {
+  .fun-who { padding: 90px 20px 20px; }
+  .fun-who-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fun-sticker { animation: none; }
+}

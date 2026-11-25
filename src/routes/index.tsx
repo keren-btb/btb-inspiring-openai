@@ -15,6 +15,8 @@ import {
   Puzzle,
   Search,
   ShieldCheck,
+  Briefcase,
+  PartyPopper,
   ShoppingBag,
   Star,
   Ticket,
@@ -22,6 +24,12 @@ import {
   X,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import '../fun.css'
+
+// Two looks from one set of content: the default (editorial) and FUN (bright, quirky).
+// Build the fun one with VITE_THEME=fun (see vite.config.ts).
+const FUN = import.meta.env.VITE_THEME === 'fun'
+const t = <T,>(fun: T, plain: T): T => (FUN ? fun : plain)
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -259,7 +267,7 @@ function HomePage() {
   }
 
   return (
-    <main>
+    <main className={FUN ? 'theme-fun' : undefined}>
       <div className="demo-notice" role="status">
         <strong>Preview site:</strong> our main website and email are temporarily down, so this unfinished preview of our new site is standing in.
         Questions? Call <a href="tel:0220537365">022 053 7365</a> or message us on <a href="https://www.facebook.com/btbescaperooms" target="_blank" rel="noreferrer">Facebook</a>.
@@ -302,14 +310,14 @@ function HomePage() {
 
         <div className="hero-content">
           <div className="eyebrow reveal reveal-1">
-            <span /> Hawke’s Bay’s home of curious minds
+            <span /> {t('Puzzles · Laughs · Teamwork', 'Hawke’s Bay’s home of curious minds')}
           </div>
           <h1 className="reveal reveal-2">
-            Step inside.
-            <em>Think beyond.</em>
+            {t('Get locked in.', 'Step inside.')}
+            <em>{t('Have a blast.', 'Think beyond.')}</em>
           </h1>
           <p className="hero-copy reveal reveal-3">
-            Escape rooms built and run right here in Hastings. Friendly for first-timers, and a real challenge for experienced players.
+            {t('Escape rooms, VR chairs and board games right here in Hastings. Bring the kids, your mates or the whole office. First-timers welcome, experts challenged.', 'Escape rooms built and run right here in Hastings. Friendly for first-timers, and a real challenge for experienced players.')}
           </p>
           <div className="hero-actions reveal reveal-4">
             <button className="button primary" type="button" onClick={goToBooking}>
@@ -330,6 +338,7 @@ function HomePage() {
           <small>Google reviews</small>
         </div>
 
+        {FUN && <div className="fun-sticker" aria-hidden="true"><strong>60</strong>minutes of<br />brain-buzzing fun</div>}
         <div className="scroll-note" aria-hidden="true"><span /> Scroll to investigate</div>
       </header>
 
@@ -339,6 +348,25 @@ function HomePage() {
         <div><MapPin /><span><strong>Hastings</strong> Hawke’s Bay</span></div>
         <div><Puzzle /><span><strong>Local</strong> owned & run</span></div>
       </section>
+
+
+      {FUN && (
+        <section className="fun-who" aria-label="Who it’s for">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow dark"><span /> Who’s it for?</p>
+              <h2>Fun for<br /><em>every crew.</em></h2>
+            </div>
+            <p>Little detectives, big kids, best mates and whole office teams. If you can laugh, talk and think, you’re in.</p>
+          </div>
+          <div className="fun-who-grid">
+            <div className="fun-tile t1"><Users /><h3>Families</h3><p>Kids and grown-ups cracking it together, with a friendly game master and hints whenever you need them.</p></div>
+            <div className="fun-tile t2"><Heart /><h3>Friends & dates</h3><p>Catch-ups, celebrations or a very confident date night. Winner picks dinner.</p></div>
+            <div className="fun-tile t3"><Briefcase /><h3>Team building</h3><p>Communication, problem-solving and plenty of laughs. Team building people actually enjoy. Call us to plan your group.</p></div>
+            <div className="fun-tile t4"><PartyPopper /><h3>Parties</h3><p>Birthdays to remember, here at BtB or with Pirate’s Cove at your place.</p></div>
+          </div>
+        </section>
+      )}
 
       <section className="rooms-section" id="rooms">
         <div className="section-heading">

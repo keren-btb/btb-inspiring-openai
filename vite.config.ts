@@ -5,7 +5,8 @@ import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 
 const config = defineConfig({
-  base: '/test/new-site/',
+  // VITE_THEME=fun builds the fun & quirky version into /test/new-site/fun/
+  base: process.env.VITE_THEME === 'fun' ? '/test/new-site/fun/' : '/test/new-site/',
   plugins: [
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
