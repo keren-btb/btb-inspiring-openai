@@ -14,7 +14,7 @@ const config = defineConfig({
     tanstackStart({
       prerender: {
         enabled: true,
-        crawlLinks: true,
+        crawlLinks: false, // single page; links to the app (/test/*.html) live outside this build
       },
     }),
     viteReact(),

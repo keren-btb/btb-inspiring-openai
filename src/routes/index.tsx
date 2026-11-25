@@ -8,10 +8,12 @@ import {
   Clock3,
   Facebook,
   Gamepad2,
+  Heart,
   MapPin,
   Menu,
   Phone,
   Puzzle,
+  Search,
   ShieldCheck,
   ShoppingBag,
   Star,
@@ -131,6 +133,81 @@ const slots = ['Afternoon', 'Early evening', 'Evening', 'Holiday daytime']
 // Relative to the site, so it works on btbescaperooms.co.nz and on btb-app.pages.dev
 const bookingUrl = '/test/booking_widget.html'
 
+
+// ---- Board games: live list of games for sale, straight from the BtB app's POS products ----
+// Uses the public (anon) key that the booking widget already uses; only name + price are requested.
+const SB_URL = 'https://dcksohetvlonijtcbjwe.supabase.co'
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRja3NvaGV0dmxvbmlqdGNiandlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NTQ1NzgsImV4cCI6MjA5NjQzMDU3OH0.M_oDB2e0upZUYZijNmigsmXtcKaAFx8iF-nn5FZUkzk'
+type ShopGame = { name: string; sell_price: number }
+
+function BoardGamesSection() {
+  const [games, setGames] = useState<ShopGame[] | null>(null)
+  const [failed, setFailed] = useState(false)
+  const [query, setQuery] = useState('')
+  const [showAll, setShowAll] = useState(false)
+
+  useEffect(() => {
+    const url = `${SB_URL}/rest/v1/products?select=name,sell_price&category=eq.Boardgame&active=eq.true&stock_qty=gt.0&sell_price=gt.0&order=name`
+    fetch(url, { headers: { apikey: SB_ANON, Authorization: `Bearer ${SB_ANON}` } })
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((rows: ShopGame[]) => setGames(rows))
+      .catch(() => setFailed(true))
+  }, [])
+
+  const q = query.trim().toLowerCase()
+  const matches = (games ?? []).filter((g) => !q || g.name.toLowerCase().includes(q))
+  const shown = showAll || q ? matches : matches.slice(0, 24)
+  const price = (n: number) => `$${Number(n) % 1 ? Number(n).toFixed(2) : Number(n)}`
+
+  return (
+    <section className="boardgames-section" id="boardgames">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow dark"><span /> Board games</p>
+          <h2>Roll the dice.<br /><em>Take one home.</em></h2>
+        </div>
+        <p>Take a game home. We sell board games new and secondhand, and the list below comes straight from our shelves, so it’s always up to date.</p>
+      </div>
+
+      <div className="bg-grid">
+        <div className="bg-shop">
+          <div className="bg-shop-head">
+            <div>
+              <small>Games for sale</small>
+              <h3>{games ? `${games.length} games on our shelves` : 'Games on our shelves'}</h3>
+            </div>
+            <label className="bg-search">
+              <Search size={17} />
+              <input type="search" placeholder="Search for a game…" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search games for sale" />
+            </label>
+          </div>
+
+          {failed && <p className="bg-note">We couldn’t load the list just now. Give us a call on 022 053 7365 and we’ll check for you.</p>}
+          {!games && !failed && <p className="bg-note">Loading games…</p>}
+          {games && (
+            <>
+              <ul className="bg-list">
+                {shown.map((g, i) => (
+                  <li key={`${g.name}-${i}`}><span>{g.name}</span><strong>{price(g.sell_price)}</strong></li>
+                ))}
+              </ul>
+              {q && matches.length === 0 && <p className="bg-note">No match for “{query}” right now.</p>}
+              {!q && !showAll && matches.length > 24 && (
+                <button type="button" className="bg-more" onClick={() => setShowAll(true)}>Show all {matches.length} games <ChevronRight size={16} /></button>
+              )}
+            </>
+          )}
+          <div className="bg-wishlist">
+            <Heart size={18} />
+            <span>Can’t see the game you want? <a href="/test/game_wishlist_form.html" target="_blank" rel="noreferrer">Join our wishlist</a> and we’ll let you know when a copy comes in.</span>
+          </div>
+          <p className="bg-fineprint">Stock changes daily. Prices in NZD. Come in, call or message us to buy.</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [step, setStep] = useState(0)
@@ -208,6 +285,7 @@ function HomePage() {
           <a href="#rooms" onClick={() => setMenuOpen(false)}>Rooms</a>
           <a href="#portable" onClick={() => setMenuOpen(false)}>Escape room in a box</a>
           <a href="#vr" onClick={() => setMenuOpen(false)}>VR chairs</a>
+          <a href="#boardgames" onClick={() => setMenuOpen(false)}>Board games</a>
           <a href="#visit" onClick={() => setMenuOpen(false)}>Visit</a>
           <button className="nav-book" type="button" onClick={goToBooking}>
             Get tickets <Ticket size={17} />
@@ -387,6 +465,8 @@ function HomePage() {
         </div>
       </section>
 
+      <BoardGamesSection />
+
       <section className="experience-section" id="experience">
         <div className="experience-photo">
           <img src={asset('/images/experience.jpg')} alt="Players enjoying a Beyond the Box experience" />
@@ -407,7 +487,7 @@ function HomePage() {
           <div className="experience-extras">
             <div><Gamepad2 /><span><strong>Also on site</strong>VR chairs</span></div>
             <div><Puzzle /><span><strong>Grab a box</strong>Escape rooms in a box</span></div>
-            <div><ShoppingBag /><span><strong>Shop</strong>Board games, new & secondhand</span></div>
+            <div><ShoppingBag /><span><strong>Board games</strong>For sale, new & secondhand</span></div>
           </div>
         </div>
       </section>
@@ -594,7 +674,7 @@ function HomePage() {
 
       <footer className="site-footer">
         <div className="footer-brand"><img src={asset('/images/btb-logo.png')} alt="Beyond the Box" /><p>Escape rooms, escape rooms in a box, VR and board games, run by us in Hastings, New Zealand.</p></div>
-        <div><strong>Explore</strong><a href="#rooms">Escape rooms</a><a href="#portable">Escape rooms in a box</a><a href="#vr">VR chairs</a><a href="#book">Book a session</a></div>
+        <div><strong>Explore</strong><a href="#rooms">Escape rooms</a><a href="#portable">Escape rooms in a box</a><a href="#vr">VR chairs</a><a href="#boardgames">Board games</a><a href="#book">Book a session</a></div>
         <div><strong>Visit</strong><a href="#visit">Opening hours</a><a href="tel:0220537365">022 053 7365</a><a href="https://www.facebook.com/btbescaperooms" target="_blank" rel="noreferrer">Facebook</a></div>
         <div className="footer-ticket"><Ticket /><span><small>Room entry from</small><strong>$35</strong> per person</span></div>
         <p className="copyright">© {new Date().getFullYear()} Beyond the Box Escape Rooms</p>

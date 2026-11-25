@@ -1832,3 +1832,35 @@ html { scroll-padding-top: 126px; }
 }
 .vr-photo { border-radius: 4px; display: block; margin-top: 34px; max-width: 100%; width: 560px; }
 .experience-extras { flex-wrap: wrap; gap: 22px 40px; }
+
+/* ---- Board games ---- */
+.boardgames-section { background: var(--paper-light); padding: 130px clamp(24px, 7vw, 110px); }
+.bg-grid { display: grid; gap: 28px; grid-template-columns: 1fr; margin: auto; max-width: 1320px; align-items: start; }
+.bg-cafe { background: var(--forest); color: #f8f3e9; display: flex; flex-direction: column; gap: 6px; padding: 38px 34px; }
+.bg-cafe svg { color: var(--gold); margin-bottom: 12px; }
+.bg-cafe small, .bg-shop-head small { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.bg-cafe strong { font-family: var(--serif); font-size: 64px; font-weight: 400; line-height: 1; margin-top: 8px; }
+.bg-cafe > span { opacity: 0.8; }
+.bg-cafe ul { border-top: 1px solid rgba(248,243,233,0.18); font-size: 14px; line-height: 1.6; list-style: none; margin: 22px 0 26px; padding: 18px 0 0; }
+.bg-cafe li { padding: 6px 0 6px 22px; position: relative; }
+.bg-cafe li::before { color: var(--gold); content: "◆"; font-size: 9px; left: 0; position: absolute; top: 11px; }
+.bg-cafe .button { justify-content: center; text-decoration: none; }
+.bg-shop { background: #f7f2e8; border: 1px solid var(--line); padding: 34px; }
+.bg-shop-head { align-items: end; display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; margin-bottom: 22px; }
+.bg-shop-head small { color: #1d9e75; }
+.bg-shop-head h3 { font-family: var(--serif); font-size: clamp(26px, 2.4vw, 36px); font-weight: 400; letter-spacing: -0.02em; margin: 6px 0 0; }
+.bg-search { align-items: center; background: white; border: 1px solid var(--line); display: flex; gap: 8px; padding: 10px 14px; min-width: 240px; }
+.bg-search input { background: transparent; border: 0; outline: 0; width: 100%; }
+.bg-list { columns: 3; column-gap: 34px; list-style: none; margin: 0; padding: 0; }
+.bg-list li { border-bottom: 1px solid var(--line); break-inside: avoid; display: flex; font-size: 14px; gap: 12px; justify-content: space-between; padding: 9px 0; }
+.bg-list strong { color: #1d9e75; white-space: nowrap; }
+.bg-more { align-items: center; background: transparent; border: 0; border-bottom: 1px solid var(--ink); cursor: pointer; display: inline-flex; font-size: 12px; font-weight: 700; gap: 6px; margin-top: 22px; padding: 0 0 5px; }
+.bg-note { color: #6b6d66; font-size: 14px; }
+.bg-wishlist { align-items: center; background: #e9f3ee; display: flex; font-size: 14px; gap: 12px; line-height: 1.5; margin-top: 26px; padding: 14px 18px; }
+.bg-wishlist svg { color: #1d9e75; flex-shrink: 0; }
+.bg-wishlist a { color: var(--ink); font-weight: 700; }
+.bg-fineprint { color: #8a8c84; font-size: 12px; margin: 14px 0 0; }
+@media (max-width: 1050px) { .bg-grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .boardgames-section { padding: 100px 20px; } .bg-list { columns: 1; } .bg-shop { padding: 24px 20px; } .bg-search { min-width: 0; width: 100%; } }
+@media (max-width: 1050px) { .bg-list { columns: 2; } }
+@media (max-width: 560px) { .bg-list { columns: 1; } }
