@@ -1770,7 +1770,7 @@ html { scroll-padding-top: 126px; }
 .room-grid.two { grid-template-columns: 1fr 1fr; max-width: 1040px; }
 .room-grid.two .room-card:nth-child(2) { transform: none; }
 .room-grid.two .room-card:nth-child(2):hover { transform: translateY(-7px); }
-.room-grid.two .room-image-wrap img { object-position: center; }
+.room-grid.two .room-image-wrap img { object-position: center top; }
 .room-description em { color: var(--ink); font-style: normal; font-weight: 700; }
 .card-link {
   align-items: center;
@@ -1932,3 +1932,37 @@ html { scroll-padding-top: 126px; }
 .lk-clues li { flex-wrap: wrap; }
 .lk-loading { color: var(--cream); margin-top: 28px; }
 .lk-week { color: #8a8c84; font-size: 12px; letter-spacing: 0.08em; margin: 14px 0 0; text-transform: uppercase; }
+/* puzzle types */
+.lk-txt { background: var(--forest-deep); color: var(--cream); font-family: var(--serif); font-size: 18px; }
+.lk-ico.i4 { background: transparent; }
+.lk-cipher { margin-top: 26px; max-width: 560px; }
+.lk-cipher blockquote { border-left: 3px solid var(--teal); font-family: var(--serif); font-size: clamp(22px, 2.2vw, 30px); line-height: 1.3; margin: 0 0 22px; padding: 4px 0 4px 20px; }
+.lk-key { display: grid; gap: 8px; grid-template-columns: repeat(9, 1fr); }
+.lk-key span { align-items: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); display: flex; flex-direction: column; font-size: 15px; padding: 8px 0; }
+.lk-key b { color: var(--teal); font-family: var(--serif); font-size: 20px; }
+.lk-seq { display: grid; gap: 10px; list-style: none; margin: 26px 0 0; max-width: 560px; padding: 0; }
+.lk-seq li { align-items: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); display: flex; gap: 12px; padding: 12px 16px; }
+.lk-seq em { color: var(--teal); font-family: var(--serif); font-size: 20px; font-style: normal; width: 26px; }
+.lk-seq span, .lk-seq strong { font-family: var(--serif); font-size: 26px; min-width: 44px; text-align: center; }
+.lk-seq strong { background: var(--teal); border-radius: 8px; color: var(--forest-deep); }
+.lk-clocks { display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); margin-top: 26px; max-width: 560px; }
+.lk-clock { margin: 0; text-align: center; }
+.lk-clock svg { display: block; width: 100%; }
+.lk-clock .face { fill: var(--paper-light); stroke: var(--teal); stroke-width: 4; }
+.lk-clock .tick { stroke: var(--ink); stroke-width: 2; }
+.lk-clock .tick.big { stroke-width: 4; }
+.lk-clock .min { stroke: var(--ink); stroke-linecap: round; stroke-width: 3; }
+.lk-clock .hr { stroke: var(--rust); stroke-linecap: round; stroke-width: 6; }
+.lk-clock .pin { fill: var(--ink); }
+.lk-clock figcaption { color: var(--teal); font-family: var(--serif); font-size: 22px; margin-top: 6px; }
+.lk-count { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14); display: grid; gap: 6px; grid-template-columns: repeat(8, 1fr); margin-top: 26px; max-width: 560px; padding: 14px; }
+.lk-count span { align-items: center; display: flex; height: 40px; justify-content: center; }
+.lk-count svg { height: 26px; width: 26px; }
+.lk-count .t.i0 { color: var(--teal); } .lk-count .t.i1 { color: var(--gold); } .lk-count .t.i2 { color: var(--rust); } .lk-count .t.i3 { color: var(--cream); }
+.lk-count .d { color: rgba(248, 243, 233, 0.45); }
+@media (max-width: 560px) {
+  .lk-key { grid-template-columns: repeat(5, 1fr); }
+  .lk-clocks { grid-template-columns: repeat(2, 1fr); }
+  .lk-count { grid-template-columns: repeat(6, 1fr); }
+  .lk-seq span, .lk-seq strong { font-size: 20px; min-width: 32px; }
+}

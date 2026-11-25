@@ -164,22 +164,55 @@ const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsIn
 type ShopGame = { name: string; sell_price: number }
 
 // ---- Crack the code: a weekly escape-room warm-up puzzle ----
-// A new puzzle every Monday (NZ time). It is generated from the week number, so everyone sees the
-// same puzzle all week and nothing needs updating by hand. Every clue chain has exactly one answer:
-// clue 1 gives the first symbol, and each later clue uses the symbol before it to unlock the next.
+// A new puzzle every Monday (NZ time), generated from the week number so everyone sees the same one
+// all week and nothing needs updating by hand. The TYPE of puzzle rotates each week too:
+// symbol sums → riddle cipher → number patterns → clock code → count it up → (repeat).
+// Every puzzle ends in a 4-digit code with exactly one answer.
 type LockIcon = typeof Key
-const ICON_POOL: { icon: LockIcon; name: string }[] = [
+type Sym = { icon: LockIcon; name: string }
+const ICON_POOL: Sym[] = [
   { icon: Dices, name: 'dice' }, { icon: Key, name: 'key' }, { icon: Puzzle, name: 'puzzle piece' },
   { icon: Clock3, name: 'clock' }, { icon: Hourglass, name: 'hourglass' }, { icon: Compass, name: 'compass' },
   { icon: Flashlight, name: 'torch' }, { icon: Gem, name: 'gem' }, { icon: Anchor, name: 'anchor' },
   { icon: Crown, name: 'crown' }, { icon: Ghost, name: 'ghost' }, { icon: Search, name: 'magnifying glass' },
   { icon: MapIcon, name: 'map' }, { icon: Star, name: 'star' }, { icon: Rocket, name: 'rocket' }, { icon: Bell, name: 'bell' },
 ]
+// Riddle answers use only the letters A–I, so each letter is one digit (A=1 … I=9)
+const RIDDLES: { word: string; riddle: string; topic: string }[] = [
+  { word: 'DICE', riddle: 'You roll us to find out how far to move.', topic: 'board games' },
+  { word: 'HIDE', riddle: 'What you do in hide-and-seek when you’re not the seeker.', topic: 'a playground game' },
+  { word: 'FACE', riddle: 'Every clock has one, and so do you.', topic: 'something with eyes, or hands' },
+  { word: 'CAFE', riddle: 'A cosy place to grab a coffee and a slice of cake.', topic: 'somewhere to eat' },
+  { word: 'BEAD', riddle: 'A tiny ball with a hole through it, threaded onto a necklace.', topic: 'jewellery' },
+  { word: 'HEAD', riddle: 'It sits on top of your shoulders and does all your thinking.', topic: 'your body' },
+  { word: 'IDEA', riddle: 'A light-bulb moment, when you suddenly know what to do.', topic: 'thinking' },
+  { word: 'CAGE', riddle: 'A locked room for a bird. No escape for this one!', topic: 'pets' },
+  { word: 'CHEF', riddle: 'The boss of a restaurant kitchen, often in a tall white hat.', topic: 'jobs' },
+  { word: 'EDGE', riddle: 'The very outside of a coin, a table or a cliff.', topic: 'shapes' },
+  { word: 'FADE', riddle: 'What bright colours slowly do when left in the sun.', topic: 'colours' },
+  { word: 'ACHE', riddle: 'A dull pain, like a tummy ___ after too much chocolate.', topic: 'feeling unwell' },
+  { word: 'HIGH', riddle: 'The opposite of low.', topic: 'opposites' },
+]
 type Clue = { parts: number[]; ops: string[]; total: number }
-type WeeklyPuzzle = { week: number; symbols: { icon: LockIcon; name: string }[]; clues: Clue[]; answer: number[]; hints: string[] }
+type DialLabel = { sym?: Sym; text?: string; name: string }
+type WeeklyPuzzle = {
+  week: number
+  kind: 'sums' | 'cipher' | 'sequence' | 'clocks' | 'count'
+  title: string
+  intro: string
+  answer: number[]
+  hints: string[]
+  dials: DialLabel[]
+  syms: Sym[]
+  clues: Clue[]
+  riddle?: (typeof RIDDLES)[number]
+  sequences?: number[][]
+  hours?: number[]
+  grid?: { sym: number; tilt: number }[] // sym index: 0–3 = targets, 4+ = decoys
+}
+const LETTERS = ['A', 'B', 'C', 'D']
 
 function nzWeekNumber(now = new Date()) {
-  // Days since a Monday, using the date in New Zealand, divided into weeks
   const ymd = new Intl.DateTimeFormat('en-CA', { timeZone: 'Pacific/Auckland', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now)
   const days = Math.floor(Date.UTC(+ymd.slice(0, 4), +ymd.slice(5, 7) - 1, +ymd.slice(8, 10)) / 86400000)
   return Math.floor((days - 4) / 7) // 1970-01-05 was a Monday (day 4)
@@ -193,16 +226,73 @@ function rng(seed: number) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
 }
+const KINDS: WeeklyPuzzle['kind'][] = ['sums', 'cipher', 'sequence', 'clocks', 'count']
+
 function makePuzzle(week: number): WeeklyPuzzle {
   const r = rng(week)
   const pick = (n: number) => Math.floor(r() * n)
   const pool = [...ICON_POOL]
-  const symbols = Array.from({ length: 4 }, () => pool.splice(pick(pool.length), 1)[0])
-  const v = Array.from({ length: 4 }, () => 1 + pick(9)) // digits 1–9
+  const syms = Array.from({ length: 8 }, () => pool.splice(pick(pool.length), 1)[0]) // 4 targets + 4 decoys
+  const kind = KINDS[((week % KINDS.length) + KINDS.length) % KINDS.length]
+  const base = { week, kind, syms, clues: [] as Clue[] }
+
+  if (kind === 'cipher') {
+    const rid = RIDDLES[Math.floor(week / KINDS.length) % RIDDLES.length]
+    const answer = rid.word.split('').map((ch) => ch.charCodeAt(0) - 64)
+    return {
+      ...base, riddle: rid, answer, title: 'Riddle cipher',
+      intro: 'Solve the riddle to find a 4-letter word, then turn each letter into its number using the key (A=1, B=2 …). Dial the numbers in order.',
+      dials: LETTERS.map((_, i) => ({ text: `${i + 1}`, name: `letter ${i + 1}` })),
+      hints: [`The answer is to do with ${rid.topic}.`, `The word starts with ${rid.word[0]}.`, `The word is ${rid.word}. Now use the key!`],
+    }
+  }
+  if (kind === 'sequence') {
+    const answer = Array.from({ length: 4 }, () => 1 + pick(9))
+    const sequences = answer.map((d) => {
+      const style = pick(3)
+      if (style === 2) { // repeating pair
+        let other = 1 + pick(9); if (other === d) other = (d % 9) + 1
+        return [d, other, d, other] // next number is d again
+      }
+      const k = 1 + pick(3)
+      const up = style === 0 ? d - 4 * k >= 0 : !(d + 4 * k <= 30)
+      return up ? [d - 4 * k, d - 3 * k, d - 2 * k, d - k] : [d + 4 * k, d + 3 * k, d + 2 * k, d + k]
+    })
+    return {
+      ...base, sequences, answer, title: 'What comes next?',
+      intro: 'Each row is a number pattern with the next number missing. Work out each missing number and dial them in order, A to D.',
+      dials: LETTERS.map((l) => ({ text: l, name: `pattern ${l}` })),
+      hints: ['Look at how much each number goes up or down by.', 'Some patterns just repeat. Look for a back-and-forth.', `Pattern A’s missing number is ${answer[0]}.`],
+    }
+  }
+  if (kind === 'clocks') {
+    const answer = Array.from({ length: 4 }, () => 1 + pick(9))
+    return {
+      ...base, hours: answer, answer, title: 'Clock code',
+      intro: 'Four clocks, four numbers. What hour is each clock showing? Dial the hours in order, A to D.',
+      dials: LETTERS.map((l) => ({ text: l, name: `clock ${l}` })),
+      hints: ['The short hand points to the hour.', 'The long hand is on the 12, so each clock shows an exact hour (like 3 o’clock).', `Clock A shows ${answer[0]} o’clock.`],
+    }
+  }
+  if (kind === 'count') {
+    const answer = Array.from({ length: 4 }, () => 1 + pick(6))
+    const cells: { sym: number; tilt: number }[] = []
+    answer.forEach((n, i) => { for (let k = 0; k < n; k++) cells.push({ sym: i, tilt: 0 }) })
+    while (cells.length < 32) cells.push({ sym: 4 + pick(4), tilt: 0 })
+    for (let i = cells.length - 1; i > 0; i--) { const j = pick(i + 1); [cells[i], cells[j]] = [cells[j], cells[i]] }
+    cells.forEach((c) => (c.tilt = pick(41) - 20))
+    return {
+      ...base, grid: cells, answer, title: 'Count it up',
+      intro: 'Count how many of each symbol on the lock are hiding in the jumble. Ignore the others! Dial each count into its matching dial.',
+      dials: syms.slice(0, 4).map((sym) => ({ sym, name: sym.name })),
+      hints: ['Go row by row and keep a tally for each symbol.', 'Each symbol appears between 1 and 6 times.', `There are ${answer[0]} of the ${syms[0].name}.`],
+    }
+  }
+  // 'sums'
+  const v = Array.from({ length: 4 }, () => 1 + pick(9))
   const clues: Clue[] = []
   const hints: string[] = []
-  const n = (i: number) => symbols[i].name
-  // Clue 1: the first symbol on its own
+  const n = (i: number) => syms[i].name
   if (r() < 0.6) {
     clues.push({ parts: [0, 0], ops: ['+'], total: v[0] * 2 })
     hints.push(`Start with the first clue: two of the ${n(0)} make ${v[0] * 2}, so one ${n(0)} is half of that.`)
@@ -210,7 +300,6 @@ function makePuzzle(week: number): WeeklyPuzzle {
     clues.push({ parts: [0, 0, 0], ops: ['+', '+'], total: v[0] * 3 })
     hints.push(`Start with the first clue: three of the ${n(0)} make ${v[0] * 3}, so one ${n(0)} is a third of that.`)
   }
-  // Clues 2–4: each links the previous symbol to the next one
   for (let i = 1; i < 4; i++) {
     const a = v[i - 1], b = v[i]
     const choice = r()
@@ -219,16 +308,43 @@ function makePuzzle(week: number): WeeklyPuzzle {
     else clues.push({ parts: [i - 1, i], ops: ['×'], total: a * b })
     hints.push(i === 1 ? `Now you know the ${n(0)}, the next clue gives you the ${n(1)}.` : `Keep following the chain: the ${n(i - 1)} unlocks the ${n(i)}.`)
   }
-  return { week, symbols, clues, answer: v, hints: hints.slice(0, 3) }
+  return {
+    ...base, clues, answer: v, title: 'Symbol sums', hints: hints.slice(0, 3),
+    intro: 'Every symbol hides a number from 1 to 9. Use the clues to work them out, then dial the code in the order shown on the lock.',
+    dials: syms.slice(0, 4).map((sym) => ({ sym, name: sym.name })),
+  }
+}
+
+function ClockFace({ hour, label }: { hour: number; label: string }) {
+  const a = (hour % 12) * 30 * (Math.PI / 180)
+  return (
+    <figure className="lk-clock">
+      <svg viewBox="0 0 100 100" role="img" aria-label={`Clock ${label}`}>
+        <circle cx="50" cy="50" r="46" className="face" />
+        {Array.from({ length: 12 }, (_, i) => {
+          const t = (i * 30 * Math.PI) / 180
+          return <line key={i} x1={50 + 38 * Math.sin(t)} y1={50 - 38 * Math.cos(t)} x2={50 + 43 * Math.sin(t)} y2={50 - 43 * Math.cos(t)} className={i % 3 ? 'tick' : 'tick big'} />
+        })}
+        <line x1="50" y1="50" x2="50" y2="13" className="min" />
+        <line x1="50" y1="50" x2={50 + 24 * Math.sin(a)} y2={50 - 24 * Math.cos(a)} className="hr" />
+        <circle cx="50" cy="50" r="4" className="pin" />
+      </svg>
+      <figcaption>{label}</figcaption>
+    </figure>
+  )
 }
 
 function CrackTheCode() {
-  // Worked out in the browser (not at build time), so it always matches this week
+  // Worked out in the browser (not at build time), so it always matches this week.
+  // Add ?puzzleweek=1 (or 2, 3 …) to the address to preview the coming weeks.
   const [puzzle, setPuzzle] = useState<WeeklyPuzzle | null>(null)
   const [digits, setDigits] = useState([0, 0, 0, 0])
   const [status, setStatus] = useState<'idle' | 'wrong' | 'open'>('idle')
   const [hints, setHints] = useState(0)
-  useEffect(() => setPuzzle(makePuzzle(nzWeekNumber())), [])
+  useEffect(() => {
+    const ahead = parseInt(new URLSearchParams(window.location.search).get('puzzleweek') || '0', 10) || 0
+    setPuzzle(makePuzzle(nzWeekNumber() + Math.max(0, Math.min(ahead, 52))))
+  }, [])
 
   const turn = (i: number, d: number) => {
     if (status === 'open') return
@@ -236,32 +352,64 @@ function CrackTheCode() {
     setDigits((cur) => cur.map((x, j) => (j === i ? (x + d + 10) % 10 : x)))
   }
   const tryOpen = () => puzzle && setStatus(digits.every((x, i) => x === puzzle.answer[i]) ? 'open' : 'wrong')
-  const sym = (i: number) => puzzle!.symbols[i]
-  const Ico = ({ i, size }: { i: number; size?: number }) => {
-    const I = sym(i).icon
-    return <span className={`lk-ico i${i}`}><I size={size} /></span>
+  const Ico = ({ i }: { i: number }) => {
+    const I = puzzle!.syms[i].icon
+    return <span className={`lk-ico i${Math.min(i, 4)}`}><I /></span>
+  }
+  const opWord = (o: string) => (o === '−' ? 'minus' : o === '×' ? 'times' : 'plus')
+
+  const body = () => {
+    if (!puzzle) return <p className="lk-loading">Loading this week’s puzzle…</p>
+    switch (puzzle.kind) {
+      case 'cipher':
+        return (
+          <div className="lk-cipher">
+            <blockquote>“{puzzle.riddle!.riddle}”</blockquote>
+            <div className="lk-key" aria-label="Key: A equals 1, B equals 2, and so on up to I equals 9">
+              {'ABCDEFGHI'.split('').map((ch, i) => <span key={ch}><b>{ch}</b>{i + 1}</span>)}
+            </div>
+          </div>
+        )
+      case 'sequence':
+        return (
+          <ul className="lk-seq">
+            {puzzle.sequences!.map((seq, i) => (
+              <li key={i}><em>{LETTERS[i]}</em>{seq.map((x, j) => <span key={j}>{x}</span>)}<strong>?</strong></li>
+            ))}
+          </ul>
+        )
+      case 'clocks':
+        return <div className="lk-clocks">{puzzle.hours!.map((h, i) => <ClockFace key={i} hour={h} label={LETTERS[i]} />)}</div>
+      case 'count':
+        return (
+          <div className="lk-count" role="img" aria-label="A jumble of symbols to count">
+            {puzzle.grid!.map((c, k) => {
+              const I = puzzle.syms[c.sym].icon
+              return <span key={k} className={c.sym < 4 ? `t i${c.sym}` : 'd'} style={{ transform: `rotate(${c.tilt}deg)` }}><I /></span>
+            })}
+          </div>
+        )
+      default:
+        return (
+          <ul className="lk-clues">
+            {puzzle.clues.map((c, k) => (
+              <li key={k} aria-label={c.parts.map((pp, j) => (j ? ` ${opWord(c.ops[j - 1])} ` : '') + puzzle.syms[pp].name).join('') + ` equals ${c.total}`}>
+                {c.parts.map((pp, j) => <span className="lk-term" key={j}>{j > 0 && <b>{c.ops[j - 1]}</b>}<Ico i={pp} /></span>)}
+                <b>=</b><strong>{c.total}</strong>
+              </li>
+            ))}
+          </ul>
+        )
+    }
   }
 
   return (
     <section className="lock-section" id="crack-the-code">
       <div className="lock-copy">
-        <p className="eyebrow light"><span /> Puzzle of the week</p>
+        <p className="eyebrow light"><span /> Puzzle of the week{puzzle ? ` · ${puzzle.title}` : ''}</p>
         <h2>Can you<br /><em>crack the code?</em></h2>
-        <p className="lead">Every symbol hides a number from 1 to 9. Use the clues to work them out, then dial the code in the order shown on the lock. A brand new puzzle every Monday.</p>
-        {puzzle ? (
-          <ul className="lk-clues">
-            {puzzle.clues.map((c, k) => (
-              <li key={k} aria-label={c.parts.map((p, j) => (j ? ` ${c.ops[j - 1] === '−' ? 'minus' : c.ops[j - 1] === '×' ? 'times' : 'plus'} ` : '') + sym(p).name).join('') + ` equals ${c.total}`}>
-                {c.parts.map((p, j) => (
-                  <span className="lk-term" key={j}>{j > 0 && <b>{c.ops[j - 1]}</b>}<Ico i={p} /></span>
-                ))}
-                <b>=</b><strong>{c.total}</strong>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="lk-loading">Loading this week’s puzzle…</p>
-        )}
+        <p className="lead">{puzzle ? puzzle.intro : 'A brand new puzzle every Monday.'}</p>
+        {body()}
         {puzzle && (
           <div className="lk-hints">
             {puzzle.hints.slice(0, hints).map((h) => <p key={h}><Lightbulb size={16} /> {h}</p>)}
@@ -275,14 +423,17 @@ function CrackTheCode() {
       <div className={`lk-lock ${status}`}>
         <div className="lk-padlock" aria-hidden="true">{status === 'open' ? <LockOpen /> : <Lock />}</div>
         <div className="lk-dials">
-          {digits.map((x, i) => (
-            <div className="lk-dial" key={i}>
-              {puzzle ? <Ico i={i} /> : <span className="lk-ico" />}
-              <button type="button" aria-label={`Increase the ${puzzle ? sym(i).name : 'next'} digit`} onClick={() => turn(i, 1)}>▲</button>
-              <output aria-label={`${puzzle ? sym(i).name : 'Lock'} digit`}>{x}</output>
-              <button type="button" aria-label={`Decrease the ${puzzle ? sym(i).name : 'next'} digit`} onClick={() => turn(i, -1)}>▼</button>
-            </div>
-          ))}
+          {digits.map((x, i) => {
+            const d = puzzle?.dials[i]
+            return (
+              <div className="lk-dial" key={i}>
+                {d?.sym ? <Ico i={i} /> : <span className="lk-ico lk-txt">{d?.text ?? ''}</span>}
+                <button type="button" aria-label={`Increase the ${d?.name ?? 'next'} digit`} onClick={() => turn(i, 1)}>▲</button>
+                <output aria-label={`${d?.name ?? 'lock'} digit`}>{x}</output>
+                <button type="button" aria-label={`Decrease the ${d?.name ?? 'next'} digit`} onClick={() => turn(i, -1)}>▼</button>
+              </div>
+            )
+          })}
         </div>
         <p className="lk-status" aria-live="polite">
           {status === 'open' && <><strong>You escaped!</strong> Nicely done. Ready for the real thing?</>}
@@ -294,7 +445,7 @@ function CrackTheCode() {
         ) : (
           <button type="button" className="button primary wide" onClick={tryOpen} disabled={!puzzle}>Try the lock <Key size={18} /></button>
         )}
-        <p className="lk-week">New puzzle every Monday</p>
+        <p className="lk-week">A new kind of puzzle every Monday</p>
       </div>
     </section>
   )
