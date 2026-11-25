@@ -206,7 +206,7 @@ function HomePage() {
 
         <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <a href="#rooms" onClick={() => setMenuOpen(false)}>Rooms</a>
-          <a href="#portable" onClick={() => setMenuOpen(false)}>Portable games</a>
+          <a href="#portable" onClick={() => setMenuOpen(false)}>Escape room in a box</a>
           <a href="#vr" onClick={() => setMenuOpen(false)}>VR chairs</a>
           <a href="#visit" onClick={() => setMenuOpen(false)}>Visit</a>
           <button className="nav-book" type="button" onClick={goToBooking}>
@@ -306,10 +306,10 @@ function HomePage() {
       <section className="rooms-section portable-section" id="portable">
         <div className="section-heading">
           <div>
-            <p className="eyebrow dark"><span /> Portable games</p>
+            <p className="eyebrow dark"><span /> Escape rooms in a box</p>
             <h2>Puzzles in<br /><em>a box.</em></h2>
           </div>
-          <p>Self-contained escape games packed into a single box or chest. Play The Cube here at Beyond the Box, or bring Pirate’s Cove home for a pirate party.</p>
+          <p>A whole escape room packed into a single box or chest. Play The Cube here at Beyond the Box, or bring Pirate’s Cove home for a pirate party.</p>
         </div>
 
         <div className="room-grid two">
@@ -406,7 +406,7 @@ function HomePage() {
           </div>
           <div className="experience-extras">
             <div><Gamepad2 /><span><strong>Also on site</strong>VR chairs</span></div>
-            <div><Puzzle /><span><strong>Grab a box</strong>Portable games</span></div>
+            <div><Puzzle /><span><strong>Grab a box</strong>Escape rooms in a box</span></div>
             <div><ShoppingBag /><span><strong>Shop</strong>Board games, new & secondhand</span></div>
           </div>
         </div>
@@ -593,8 +593,8 @@ function HomePage() {
       </section>
 
       <footer className="site-footer">
-        <div className="footer-brand"><img src={asset('/images/btb-logo.png')} alt="Beyond the Box" /><p>Escape rooms, portable games, VR and board games, run by us in Hastings, New Zealand.</p></div>
-        <div><strong>Explore</strong><a href="#rooms">Escape rooms</a><a href="#portable">Portable games</a><a href="#vr">VR chairs</a><a href="#book">Book a session</a></div>
+        <div className="footer-brand"><img src={asset('/images/btb-logo.png')} alt="Beyond the Box" /><p>Escape rooms, escape rooms in a box, VR and board games, run by us in Hastings, New Zealand.</p></div>
+        <div><strong>Explore</strong><a href="#rooms">Escape rooms</a><a href="#portable">Escape rooms in a box</a><a href="#vr">VR chairs</a><a href="#book">Book a session</a></div>
         <div><strong>Visit</strong><a href="#visit">Opening hours</a><a href="tel:0220537365">022 053 7365</a><a href="https://www.facebook.com/btbescaperooms" target="_blank" rel="noreferrer">Facebook</a></div>
         <div className="footer-ticket"><Ticket /><span><small>Room entry from</small><strong>$35</strong> per person</span></div>
         <p className="copyright">© {new Date().getFullYear()} Beyond the Box Escape Rooms</p>
