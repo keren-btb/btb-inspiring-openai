@@ -13,6 +13,19 @@ export const Route = createRootRoute({
           'Escape rooms, escape rooms in a box, VR chairs and board games for sale (new & secondhand) in Hastings, Hawke’s Bay. Friendly for first-timers, challenging for experienced players.',
       },
       { name: 'theme-color', content: import.meta.env.VITE_THEME === 'fun' ? '#1e2350' : '#1f3029' },
+      // Preview site only: keep it out of Google so it never competes with btbescaperooms.co.nz
+      { name: 'robots', content: 'noindex, nofollow' },
+      // Facebook / social link preview (always points at the current version)
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: 'Beyond the Box Escape Rooms' },
+      { property: 'og:title', content: 'Beyond the Box Escape Rooms | Hastings' },
+      { property: 'og:description', content: 'Escape rooms, escape rooms in a box, VR chairs and board games in Hastings, Hawke’s Bay. Crack this week’s puzzle, then book your adventure!' },
+      { property: 'og:url', content: 'https://btb-app.pages.dev/test/new-site/' },
+      { property: 'og:image', content: 'https://btb-app.pages.dev/test/new-site/images/share.jpg' },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { property: 'og:image:alt', content: 'Beyond the Box Escape Rooms, Hastings' },
+      { name: 'twitter:card', content: 'summary_large_image' },
     ],
     links: [
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
