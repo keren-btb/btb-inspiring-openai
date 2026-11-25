@@ -166,7 +166,7 @@ function BoardGamesSection() {
           <p className="eyebrow dark"><span /> Board games</p>
           <h2>Roll the dice.<br /><em>Take one home.</em></h2>
         </div>
-        <p>Take a game home. We sell board games new and secondhand, and the list below comes straight from our shelves, so it’s always up to date.</p>
+        <p>Take a game home. We sell board games new and secondhand. Have a browse of what’s on our shelves below.</p>
       </div>
 
       <div className="bg-grid">
@@ -201,7 +201,7 @@ function BoardGamesSection() {
             <Heart size={18} />
             <span>Can’t see the game you want? <a href="/test/game_wishlist_form.html" target="_blank" rel="noreferrer">Join our wishlist</a> and we’ll let you know when a copy comes in.</span>
           </div>
-          <p className="bg-fineprint">Stock changes daily. Prices in NZD. Come in, call or message us to buy.</p>
+          <p className="bg-fineprint">Please note: this list may not always be correct. Games sell quickly and prices can change, so give us a call or message before you come in for a particular game. Prices in NZD.</p>
         </div>
       </div>
     </section>
