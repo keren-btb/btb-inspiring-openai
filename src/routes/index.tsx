@@ -169,6 +169,8 @@ function BoardGamesSection() {
         <p>Take a game home. We sell board games new and secondhand. Have a browse of what’s on our shelves below.</p>
       </div>
 
+      <img className="bg-banner" src={asset('/images/board-games.svg')} alt="Illustration of board games: dice, meeples, cards and a game board" />
+
       <div className="bg-grid">
         <div className="bg-shop">
           <div className="bg-shop-head">

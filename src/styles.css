@@ -1865,3 +1865,4 @@ html { scroll-padding-top: 126px; }
 @media (max-width: 1050px) { .bg-list { columns: 2; } }
 @media (max-width: 560px) { .bg-list { columns: 1; } }
 .hours-note { font-size: 13px; margin: 14px 0 0; opacity: 0.8; }
+.bg-banner { display: block; height: auto; margin: 0 auto 28px; max-width: 1320px; width: 100%; }
