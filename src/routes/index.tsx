@@ -13,6 +13,7 @@ import {
   Phone,
   Puzzle,
   ShieldCheck,
+  ShoppingBag,
   Star,
   Ticket,
   Users,
@@ -406,6 +407,7 @@ function HomePage() {
           <div className="experience-extras">
             <div><Gamepad2 /><span><strong>Also on site</strong>VR chairs</span></div>
             <div><Puzzle /><span><strong>Grab a box</strong>Portable games</span></div>
+            <div><ShoppingBag /><span><strong>Shop</strong>Board games, new & secondhand</span></div>
           </div>
         </div>
       </section>
@@ -591,7 +593,7 @@ function HomePage() {
       </section>
 
       <footer className="site-footer">
-        <div className="footer-brand"><img src={asset('/images/btb-logo.png')} alt="Beyond the Box" /><p>Escape rooms, portable games and VR, run by us in Hastings, New Zealand.</p></div>
+        <div className="footer-brand"><img src={asset('/images/btb-logo.png')} alt="Beyond the Box" /><p>Escape rooms, portable games, VR and board games, run by us in Hastings, New Zealand.</p></div>
         <div><strong>Explore</strong><a href="#rooms">Escape rooms</a><a href="#portable">Portable games</a><a href="#vr">VR chairs</a><a href="#book">Book a session</a></div>
         <div><strong>Visit</strong><a href="#visit">Opening hours</a><a href="tel:0220537365">022 053 7365</a><a href="https://www.facebook.com/btbescaperooms" target="_blank" rel="noreferrer">Facebook</a></div>
         <div className="footer-ticket"><Ticket /><span><small>Room entry from</small><strong>$35</strong> per person</span></div>

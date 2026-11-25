@@ -1831,3 +1831,4 @@ html { scroll-padding-top: 126px; }
   .vr-prices { grid-template-columns: 1fr; }
 }
 .vr-photo { border-radius: 4px; display: block; margin-top: 34px; max-width: 100%; width: 560px; }
+.experience-extras { flex-wrap: wrap; gap: 22px 40px; }

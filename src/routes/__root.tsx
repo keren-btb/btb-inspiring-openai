@@ -10,7 +10,7 @@ export const Route = createRootRoute({
       {
         name: 'description',
         content:
-          'Escape rooms, portable escape games and VR chairs in Hastings, Hawke’s Bay. Friendly for first-timers, challenging for experienced players.',
+          'Escape rooms, portable escape games, VR chairs and board games (new & secondhand) in Hastings, Hawke’s Bay. Friendly for first-timers, challenging for experienced players.',
       },
       { name: 'theme-color', content: '#1f3029' },
     ],
