@@ -20,6 +20,16 @@ import {
   Lightbulb,
   Lock,
   LockOpen,
+  Hourglass,
+  Compass,
+  Flashlight,
+  Gem,
+  Anchor,
+  Crown,
+  Ghost,
+  Map as MapIcon,
+  Rocket,
+  Bell,
   Briefcase,
   PartyPopper,
   ShoppingBag,
@@ -153,71 +163,126 @@ const SB_URL = 'https://dcksohetvlonijtcbjwe.supabase.co'
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRja3NvaGV0dmxvbmlqdGNiandlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NTQ1NzgsImV4cCI6MjA5NjQzMDU3OH0.M_oDB2e0upZUYZijNmigsmXtcKaAFx8iF-nn5FZUkzk'
 type ShopGame = { name: string; sell_price: number }
 
-// ---- Crack the code: a tiny escape-room puzzle for website visitors ----
-// Dice + Dice = 8, Dice + Key = 11, Key + Puzzle = 10, Puzzle + Clock = 5  →  4 7 3 2
-const LOCK_ANSWER = [4, 7, 3, 2]
-const LOCK_ICONS = [Dices, Key, Puzzle, Clock3]
-const LOCK_NAMES = ['dice', 'key', 'puzzle piece', 'clock']
-const LOCK_HINTS = [
-  'Start with the first clue: two dice make 8, so one dice is worth half of that.',
-  'Now you know the dice, the second clue gives you the key.',
-  'The key unlocks the puzzle piece in clue three, and the puzzle piece gives you the clock.',
+// ---- Crack the code: a weekly escape-room warm-up puzzle ----
+// A new puzzle every Monday (NZ time). It is generated from the week number, so everyone sees the
+// same puzzle all week and nothing needs updating by hand. Every clue chain has exactly one answer:
+// clue 1 gives the first symbol, and each later clue uses the symbol before it to unlock the next.
+type LockIcon = typeof Key
+const ICON_POOL: { icon: LockIcon; name: string }[] = [
+  { icon: Dices, name: 'dice' }, { icon: Key, name: 'key' }, { icon: Puzzle, name: 'puzzle piece' },
+  { icon: Clock3, name: 'clock' }, { icon: Hourglass, name: 'hourglass' }, { icon: Compass, name: 'compass' },
+  { icon: Flashlight, name: 'torch' }, { icon: Gem, name: 'gem' }, { icon: Anchor, name: 'anchor' },
+  { icon: Crown, name: 'crown' }, { icon: Ghost, name: 'ghost' }, { icon: Search, name: 'magnifying glass' },
+  { icon: MapIcon, name: 'map' }, { icon: Star, name: 'star' }, { icon: Rocket, name: 'rocket' }, { icon: Bell, name: 'bell' },
 ]
+type Clue = { parts: number[]; ops: string[]; total: number }
+type WeeklyPuzzle = { week: number; symbols: { icon: LockIcon; name: string }[]; clues: Clue[]; answer: number[]; hints: string[] }
+
+function nzWeekNumber(now = new Date()) {
+  // Days since a Monday, using the date in New Zealand, divided into weeks
+  const ymd = new Intl.DateTimeFormat('en-CA', { timeZone: 'Pacific/Auckland', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now)
+  const days = Math.floor(Date.UTC(+ymd.slice(0, 4), +ymd.slice(5, 7) - 1, +ymd.slice(8, 10)) / 86400000)
+  return Math.floor((days - 4) / 7) // 1970-01-05 was a Monday (day 4)
+}
+function rng(seed: number) {
+  let a = seed * 2654435761 + 12345
+  return () => {
+    a |= 0; a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+function makePuzzle(week: number): WeeklyPuzzle {
+  const r = rng(week)
+  const pick = (n: number) => Math.floor(r() * n)
+  const pool = [...ICON_POOL]
+  const symbols = Array.from({ length: 4 }, () => pool.splice(pick(pool.length), 1)[0])
+  const v = Array.from({ length: 4 }, () => 1 + pick(9)) // digits 1–9
+  const clues: Clue[] = []
+  const hints: string[] = []
+  const n = (i: number) => symbols[i].name
+  // Clue 1: the first symbol on its own
+  if (r() < 0.6) {
+    clues.push({ parts: [0, 0], ops: ['+'], total: v[0] * 2 })
+    hints.push(`Start with the first clue: two of the ${n(0)} make ${v[0] * 2}, so one ${n(0)} is half of that.`)
+  } else {
+    clues.push({ parts: [0, 0, 0], ops: ['+', '+'], total: v[0] * 3 })
+    hints.push(`Start with the first clue: three of the ${n(0)} make ${v[0] * 3}, so one ${n(0)} is a third of that.`)
+  }
+  // Clues 2–4: each links the previous symbol to the next one
+  for (let i = 1; i < 4; i++) {
+    const a = v[i - 1], b = v[i]
+    const choice = r()
+    if (choice < 0.5 || (choice < 0.75 && a === b)) clues.push({ parts: [i - 1, i], ops: ['+'], total: a + b })
+    else if (choice < 0.75) clues.push(a > b ? { parts: [i - 1, i], ops: ['−'], total: a - b } : { parts: [i, i - 1], ops: ['−'], total: b - a })
+    else clues.push({ parts: [i - 1, i], ops: ['×'], total: a * b })
+    hints.push(i === 1 ? `Now you know the ${n(0)}, the next clue gives you the ${n(1)}.` : `Keep following the chain: the ${n(i - 1)} unlocks the ${n(i)}.`)
+  }
+  return { week, symbols, clues, answer: v, hints: hints.slice(0, 3) }
+}
 
 function CrackTheCode() {
+  // Worked out in the browser (not at build time), so it always matches this week
+  const [puzzle, setPuzzle] = useState<WeeklyPuzzle | null>(null)
   const [digits, setDigits] = useState([0, 0, 0, 0])
   const [status, setStatus] = useState<'idle' | 'wrong' | 'open'>('idle')
   const [hints, setHints] = useState(0)
+  useEffect(() => setPuzzle(makePuzzle(nzWeekNumber())), [])
+
   const turn = (i: number, d: number) => {
     if (status === 'open') return
     setStatus('idle')
-    setDigits((cur) => cur.map((v, j) => (j === i ? (v + d + 10) % 10 : v)))
+    setDigits((cur) => cur.map((x, j) => (j === i ? (x + d + 10) % 10 : x)))
   }
-  const tryOpen = () => setStatus(digits.every((v, i) => v === LOCK_ANSWER[i]) ? 'open' : 'wrong')
-  const Clue = ({ a, b, total }: { a: number; b: number; total: number }) => {
-    const A = LOCK_ICONS[a]
-    const B = LOCK_ICONS[b]
-    return (
-      <li aria-label={`${LOCK_NAMES[a]} plus ${LOCK_NAMES[b]} equals ${total}`}>
-        <span className={`lk-ico i${a}`}><A /></span><b>+</b><span className={`lk-ico i${b}`}><B /></span><b>=</b><strong>{total}</strong>
-      </li>
-    )
+  const tryOpen = () => puzzle && setStatus(digits.every((x, i) => x === puzzle.answer[i]) ? 'open' : 'wrong')
+  const sym = (i: number) => puzzle!.symbols[i]
+  const Ico = ({ i, size }: { i: number; size?: number }) => {
+    const I = sym(i).icon
+    return <span className={`lk-ico i${i}`}><I size={size} /></span>
   }
 
   return (
     <section className="lock-section" id="crack-the-code">
       <div className="lock-copy">
-        <p className="eyebrow light"><span /> Warm-up puzzle</p>
+        <p className="eyebrow light"><span /> Puzzle of the week</p>
         <h2>Can you<br /><em>crack the code?</em></h2>
-        <p className="lead">Every symbol hides a number from 0 to 9. Use the clues to work them out, then dial the code in the order shown on the lock.</p>
-        <ul className="lk-clues">
-          <Clue a={0} b={0} total={8} />
-          <Clue a={0} b={1} total={11} />
-          <Clue a={1} b={2} total={10} />
-          <Clue a={2} b={3} total={5} />
-        </ul>
-        <div className="lk-hints">
-          {LOCK_HINTS.slice(0, hints).map((h) => <p key={h}><Lightbulb size={16} /> {h}</p>)}
-          {hints < LOCK_HINTS.length && status !== 'open' && (
-            <button type="button" onClick={() => setHints(hints + 1)}>Need a hint? <Lightbulb size={15} /></button>
-          )}
-        </div>
+        <p className="lead">Every symbol hides a number from 1 to 9. Use the clues to work them out, then dial the code in the order shown on the lock. A brand new puzzle every Monday.</p>
+        {puzzle ? (
+          <ul className="lk-clues">
+            {puzzle.clues.map((c, k) => (
+              <li key={k} aria-label={c.parts.map((p, j) => (j ? ` ${c.ops[j - 1] === '−' ? 'minus' : c.ops[j - 1] === '×' ? 'times' : 'plus'} ` : '') + sym(p).name).join('') + ` equals ${c.total}`}>
+                {c.parts.map((p, j) => (
+                  <span className="lk-term" key={j}>{j > 0 && <b>{c.ops[j - 1]}</b>}<Ico i={p} /></span>
+                ))}
+                <b>=</b><strong>{c.total}</strong>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="lk-loading">Loading this week’s puzzle…</p>
+        )}
+        {puzzle && (
+          <div className="lk-hints">
+            {puzzle.hints.slice(0, hints).map((h) => <p key={h}><Lightbulb size={16} /> {h}</p>)}
+            {hints < puzzle.hints.length && status !== 'open' && (
+              <button type="button" onClick={() => setHints(hints + 1)}>Need a hint? <Lightbulb size={15} /></button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className={`lk-lock ${status}`}>
         <div className="lk-padlock" aria-hidden="true">{status === 'open' ? <LockOpen /> : <Lock />}</div>
         <div className="lk-dials">
-          {digits.map((v, i) => {
-            const Icon = LOCK_ICONS[i]
-            return (
-              <div className="lk-dial" key={i}>
-                <span className={`lk-ico i${i}`}><Icon /></span>
-                <button type="button" aria-label={`Increase the ${LOCK_NAMES[i]} digit`} onClick={() => turn(i, 1)}>▲</button>
-                <output aria-label={`${LOCK_NAMES[i]} digit`}>{v}</output>
-                <button type="button" aria-label={`Decrease the ${LOCK_NAMES[i]} digit`} onClick={() => turn(i, -1)}>▼</button>
-              </div>
-            )
-          })}
+          {digits.map((x, i) => (
+            <div className="lk-dial" key={i}>
+              {puzzle ? <Ico i={i} /> : <span className="lk-ico" />}
+              <button type="button" aria-label={`Increase the ${puzzle ? sym(i).name : 'next'} digit`} onClick={() => turn(i, 1)}>▲</button>
+              <output aria-label={`${puzzle ? sym(i).name : 'Lock'} digit`}>{x}</output>
+              <button type="button" aria-label={`Decrease the ${puzzle ? sym(i).name : 'next'} digit`} onClick={() => turn(i, -1)}>▼</button>
+            </div>
+          ))}
         </div>
         <p className="lk-status" aria-live="polite">
           {status === 'open' && <><strong>You escaped!</strong> Nicely done. Ready for the real thing?</>}
@@ -227,8 +292,9 @@ function CrackTheCode() {
         {status === 'open' ? (
           <a className="button primary wide" href="#book">Book a real escape room <ArrowRight size={18} /></a>
         ) : (
-          <button type="button" className="button primary wide" onClick={tryOpen}>Try the lock <Key size={18} /></button>
+          <button type="button" className="button primary wide" onClick={tryOpen} disabled={!puzzle}>Try the lock <Key size={18} /></button>
         )}
+        <p className="lk-week">New puzzle every Monday</p>
       </div>
     </section>
   )

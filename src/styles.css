@@ -1928,3 +1928,7 @@ html { scroll-padding-top: 126px; }
   .lk-dial { width: 64px; }
 }
 @media (prefers-reduced-motion: reduce) { .lk-lock.open .lk-padlock, .lk-lock.wrong .lk-dials { animation: none; } }
+.lk-term { align-items: center; display: inline-flex; gap: 10px; }
+.lk-clues li { flex-wrap: wrap; }
+.lk-loading { color: var(--cream); margin-top: 28px; }
+.lk-week { color: #8a8c84; font-size: 12px; letter-spacing: 0.08em; margin: 14px 0 0; text-transform: uppercase; }
