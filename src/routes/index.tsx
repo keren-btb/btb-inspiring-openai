@@ -665,8 +665,10 @@ function HomePage() {
         </div>
         <div className="hours-card">
           <div className="hours-title"><Clock3 /><span><small>Opening hours</small>By appointment</span></div>
-          <div className="hours-row"><span>Open</span><strong>3:15 pm – 8:30 pm</strong></div>
+          <div className="hours-row"><span>Tuesday – Friday</span><strong>3:15 pm – 8:30 pm</strong></div>
+          <div className="hours-row"><span>Saturday</span><strong>10:00 am – 8:30 pm</strong></div>
           <div className="hours-row"><span>School & public holidays</span><strong>10:00 am – 8:30 pm</strong></div>
+          <p className="hours-note">On Saturdays and holidays the first escape room starts at 10:30 am.</p>
           <p>Need another time? Give us a call and we’ll see what we can do.</p>
           <button className="button cream" type="button" onClick={goToBooking}>Build your ticket <Ticket size={18} /></button>
         </div>

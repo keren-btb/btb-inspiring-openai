@@ -1864,3 +1864,4 @@ html { scroll-padding-top: 126px; }
 @media (max-width: 560px) { .boardgames-section { padding: 100px 20px; } .bg-list { columns: 1; } .bg-shop { padding: 24px 20px; } .bg-search { min-width: 0; width: 100%; } }
 @media (max-width: 1050px) { .bg-list { columns: 2; } }
 @media (max-width: 560px) { .bg-list { columns: 1; } }
+.hours-note { font-size: 13px; margin: 14px 0 0; opacity: 0.8; }
