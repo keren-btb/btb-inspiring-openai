@@ -1866,3 +1866,65 @@ html { scroll-padding-top: 126px; }
 @media (max-width: 560px) { .bg-list { columns: 1; } }
 .hours-note { font-size: 13px; margin: 14px 0 0; opacity: 0.8; }
 .bg-banner { display: block; height: auto; margin: 0 auto 28px; max-width: 1320px; width: 100%; }
+
+/* ---- Crack the code puzzle ---- */
+.lock-section {
+  align-items: center;
+  background: var(--forest);
+  color: #f8f3e9;
+  display: grid;
+  gap: 7%;
+  grid-template-columns: 1.1fr 0.9fr;
+  padding: 120px clamp(24px, 7vw, 110px);
+}
+.lock-section h2 {
+  font-family: var(--serif);
+  font-size: clamp(50px, 6vw, 86px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  margin: 24px 0 26px;
+}
+.lock-section h2 em { color: var(--teal); display: block; }
+.lock-section .lead { color: rgba(248, 243, 233, 0.78); font-size: 17px; line-height: 1.7; max-width: 540px; }
+.lk-clues { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; list-style: none; margin: 28px 0 0; max-width: 540px; padding: 0; }
+.lk-clues li { align-items: center; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14); display: flex; gap: 10px; padding: 14px 16px; }
+.lk-clues b { color: rgba(248, 243, 233, 0.6); font-size: 18px; }
+.lk-clues strong { font-family: var(--serif); font-size: 30px; margin-left: auto; }
+.lk-ico { align-items: center; border-radius: 10px; display: inline-flex; height: 40px; justify-content: center; width: 40px; }
+.lk-ico svg { height: 22px; width: 22px; }
+.lk-ico.i0 { background: var(--teal); color: var(--forest-deep); }
+.lk-ico.i1 { background: var(--gold); color: var(--forest-deep); }
+.lk-ico.i2 { background: var(--rust); color: #fff; }
+.lk-ico.i3 { background: var(--cream); color: var(--forest-deep); }
+.lk-hints { margin-top: 22px; max-width: 540px; }
+.lk-hints p { align-items: flex-start; color: var(--cream); display: flex; font-size: 14px; gap: 8px; line-height: 1.5; margin: 0 0 10px; }
+.lk-hints p svg { color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+.lk-hints button { align-items: center; background: transparent; border: 0; border-bottom: 1px solid rgba(248, 243, 233, 0.5); color: #f8f3e9; cursor: pointer; display: inline-flex; font-size: 13px; font-weight: 700; gap: 6px; padding: 0 0 4px; }
+
+.lk-lock { background: var(--paper-light); border-radius: 26px; color: var(--ink); padding: 34px 30px 30px; position: relative; text-align: center; }
+.lk-padlock { align-items: center; background: var(--forest-deep); border-radius: 50%; color: var(--teal); display: flex; height: 76px; justify-content: center; margin: -72px auto 18px; width: 76px; border: 5px solid var(--paper-light); }
+.lk-padlock svg { height: 34px; width: 34px; }
+.lk-lock.open .lk-padlock { animation: lk-pop 600ms ease; background: var(--teal); color: var(--forest-deep); }
+.lk-lock.wrong .lk-dials { animation: lk-shake 400ms ease; }
+.lk-dials { display: flex; gap: 12px; justify-content: center; }
+.lk-dial { align-items: center; background: #f2ecdf; border: 1px solid var(--line); border-radius: 14px; display: flex; flex-direction: column; gap: 4px; padding: 10px 8px; width: 74px; }
+.lk-dial .lk-ico { height: 34px; width: 34px; margin-bottom: 4px; }
+.lk-dial .lk-ico svg { height: 18px; width: 18px; }
+.lk-dial button { background: transparent; border: 0; border-radius: 8px; color: var(--ink); cursor: pointer; font-size: 14px; padding: 6px 14px; }
+.lk-dial button:hover { background: rgba(0, 0, 0, 0.06); }
+.lk-dial button:focus-visible, .lk-hints button:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.lk-dial output { font-family: var(--serif); font-size: 44px; line-height: 1; }
+.lk-status { font-size: 15px; margin: 22px 0 16px; min-height: 22px; }
+.lk-lock.open .lk-status strong { color: var(--teal); }
+.lk-lock .button { margin-top: 0; text-decoration: none; }
+@keyframes lk-shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-8px); } 40%,80% { transform: translateX(8px); } }
+@keyframes lk-pop { 0% { transform: scale(1); } 40% { transform: scale(1.25) rotate(-12deg); } 100% { transform: scale(1); } }
+@media (max-width: 1050px) { .lock-section { grid-template-columns: 1fr; gap: 90px; } }
+@media (max-width: 560px) {
+  .lock-section { padding: 100px 20px; }
+  .lk-clues { grid-template-columns: 1fr; }
+  .lk-dials { gap: 8px; }
+  .lk-dial { width: 64px; }
+}
+@media (prefers-reduced-motion: reduce) { .lk-lock.open .lk-padlock, .lk-lock.wrong .lk-dials { animation: none; } }

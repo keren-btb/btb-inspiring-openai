@@ -263,3 +263,13 @@
 @media (prefers-reduced-motion: reduce) {
   .fun-sticker { animation: none; }
 }
+
+/* ---------- Crack the code (fun look) ---------- */
+.theme-fun .lock-section { background: var(--forest-deep); }
+.theme-fun .lock-section h2 { font-weight: 700; }
+.theme-fun .lock-section h2 em { color: var(--teal); }
+.theme-fun .lk-clues li { border: 2px dashed rgba(255, 255, 255, 0.3); border-radius: 16px; }
+.theme-fun .lk-lock { border: 3px solid var(--ink); box-shadow: 10px 10px 0 var(--teal); transform: rotate(1.5deg); }
+.theme-fun .lk-dial { background: white; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.theme-fun .lk-dial output { font-weight: 700; }
+.theme-fun .lk-padlock { border-color: var(--ink); }

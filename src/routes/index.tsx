@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
+  Dices,
   Facebook,
   Gamepad2,
   Heart,
@@ -15,6 +16,10 @@ import {
   Puzzle,
   Search,
   ShieldCheck,
+  Key,
+  Lightbulb,
+  Lock,
+  LockOpen,
   Briefcase,
   PartyPopper,
   ShoppingBag,
@@ -147,6 +152,87 @@ const bookingUrl = '/test/booking_widget.html'
 const SB_URL = 'https://dcksohetvlonijtcbjwe.supabase.co'
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRja3NvaGV0dmxvbmlqdGNiandlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NTQ1NzgsImV4cCI6MjA5NjQzMDU3OH0.M_oDB2e0upZUYZijNmigsmXtcKaAFx8iF-nn5FZUkzk'
 type ShopGame = { name: string; sell_price: number }
+
+// ---- Crack the code: a tiny escape-room puzzle for website visitors ----
+// Dice + Dice = 8, Dice + Key = 11, Key + Puzzle = 10, Puzzle + Clock = 5  →  4 7 3 2
+const LOCK_ANSWER = [4, 7, 3, 2]
+const LOCK_ICONS = [Dices, Key, Puzzle, Clock3]
+const LOCK_NAMES = ['dice', 'key', 'puzzle piece', 'clock']
+const LOCK_HINTS = [
+  'Start with the first clue: two dice make 8, so one dice is worth half of that.',
+  'Now you know the dice, the second clue gives you the key.',
+  'The key unlocks the puzzle piece in clue three, and the puzzle piece gives you the clock.',
+]
+
+function CrackTheCode() {
+  const [digits, setDigits] = useState([0, 0, 0, 0])
+  const [status, setStatus] = useState<'idle' | 'wrong' | 'open'>('idle')
+  const [hints, setHints] = useState(0)
+  const turn = (i: number, d: number) => {
+    if (status === 'open') return
+    setStatus('idle')
+    setDigits((cur) => cur.map((v, j) => (j === i ? (v + d + 10) % 10 : v)))
+  }
+  const tryOpen = () => setStatus(digits.every((v, i) => v === LOCK_ANSWER[i]) ? 'open' : 'wrong')
+  const Clue = ({ a, b, total }: { a: number; b: number; total: number }) => {
+    const A = LOCK_ICONS[a]
+    const B = LOCK_ICONS[b]
+    return (
+      <li aria-label={`${LOCK_NAMES[a]} plus ${LOCK_NAMES[b]} equals ${total}`}>
+        <span className={`lk-ico i${a}`}><A /></span><b>+</b><span className={`lk-ico i${b}`}><B /></span><b>=</b><strong>{total}</strong>
+      </li>
+    )
+  }
+
+  return (
+    <section className="lock-section" id="crack-the-code">
+      <div className="lock-copy">
+        <p className="eyebrow light"><span /> Warm-up puzzle</p>
+        <h2>Can you<br /><em>crack the code?</em></h2>
+        <p className="lead">Every symbol hides a number from 0 to 9. Use the clues to work them out, then dial the code in the order shown on the lock.</p>
+        <ul className="lk-clues">
+          <Clue a={0} b={0} total={8} />
+          <Clue a={0} b={1} total={11} />
+          <Clue a={1} b={2} total={10} />
+          <Clue a={2} b={3} total={5} />
+        </ul>
+        <div className="lk-hints">
+          {LOCK_HINTS.slice(0, hints).map((h) => <p key={h}><Lightbulb size={16} /> {h}</p>)}
+          {hints < LOCK_HINTS.length && status !== 'open' && (
+            <button type="button" onClick={() => setHints(hints + 1)}>Need a hint? <Lightbulb size={15} /></button>
+          )}
+        </div>
+      </div>
+
+      <div className={`lk-lock ${status}`}>
+        <div className="lk-padlock" aria-hidden="true">{status === 'open' ? <LockOpen /> : <Lock />}</div>
+        <div className="lk-dials">
+          {digits.map((v, i) => {
+            const Icon = LOCK_ICONS[i]
+            return (
+              <div className="lk-dial" key={i}>
+                <span className={`lk-ico i${i}`}><Icon /></span>
+                <button type="button" aria-label={`Increase the ${LOCK_NAMES[i]} digit`} onClick={() => turn(i, 1)}>▲</button>
+                <output aria-label={`${LOCK_NAMES[i]} digit`}>{v}</output>
+                <button type="button" aria-label={`Decrease the ${LOCK_NAMES[i]} digit`} onClick={() => turn(i, -1)}>▼</button>
+              </div>
+            )
+          })}
+        </div>
+        <p className="lk-status" aria-live="polite">
+          {status === 'open' && <><strong>You escaped!</strong> Nicely done. Ready for the real thing?</>}
+          {status === 'wrong' && <>Not quite. Check your clues and try again.</>}
+          {status === 'idle' && <>Dial the code, then try the lock.</>}
+        </p>
+        {status === 'open' ? (
+          <a className="button primary wide" href="#book">Book a real escape room <ArrowRight size={18} /></a>
+        ) : (
+          <button type="button" className="button primary wide" onClick={tryOpen}>Try the lock <Key size={18} /></button>
+        )}
+      </div>
+    </section>
+  )
+}
 
 function BoardGamesSection() {
   const [games, setGames] = useState<ShopGame[] | null>(null)
@@ -378,11 +464,10 @@ function HomePage() {
         </div>
 
         <div className="room-grid two">
-          {rooms.filter((r) => r.id !== 'gregg').map((room, index) => (
+          {rooms.filter((r) => r.id !== 'gregg').map((room) => (
             <article className="room-card" key={room.id} style={{ '--room-accent': room.accent } as React.CSSProperties}>
               <div className="room-image-wrap">
                 <img src={room.image} alt={`${room.name} escape room`} />
-                <span className="case-number">0{index + 1}</span>
                 <span className="open-stamp">{(room as Room).badge ?? 'Open now'}</span>
               </div>
               <div className="room-card-body">
@@ -499,6 +584,8 @@ function HomePage() {
           </article>
         </div>
       </section>
+
+      <CrackTheCode />
 
       <section className="vr-section" id="vr">
         <div className="vr-copy">
