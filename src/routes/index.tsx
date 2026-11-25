@@ -18,7 +18,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -56,6 +56,7 @@ const rooms = [
     image: asset('/images/christmas.jpg'),
     accent: '#55715c',
     code: 'BTB-02',
+    badge: 'Designed & built by us',
   },
   {
     id: 'gregg',
@@ -66,12 +67,43 @@ const rooms = [
     players: '3–5',
     minPlayers: 3,
     maxPlayers: 5,
-    duration: 45,
+    duration: 60,
     image: asset('/images/gregg.jpg'),
     accent: '#b78b3d',
     code: 'BTB-03',
   },
 ]
+
+type Room = (typeof rooms)[number] & { badge?: string }
+
+// Portable games: The Cube is played here at BtB; Pirate's Cove can also be hired out for parties at home.
+const cube = {
+  id: 'cube',
+  name: 'The Cube',
+  kicker: 'The entry test',
+  description:
+    'An elite task force is being assembled, and The Cube is the test that sorts the best from the rest. Crack every side to prove your team has what it takes.',
+  players: '2–4',
+  minPlayers: 2,
+  maxPlayers: 4,
+  duration: 60,
+  image: asset('/images/the-cube.jpg'),
+  accent: '#07a3b3',
+  code: 'BTB-04',
+}
+
+const piratesCove = {
+  id: 'pirates',
+  name: 'Pirate’s Cove',
+  kicker: 'Party at your place',
+  description:
+    'A locked pirate treasure chest packed with puzzles. Hire it for a pirate party at your own house and let the crew race to claim the treasure.',
+  durationText: '40–60 min',
+  image: asset('/images/pirates-cove.jpg'),
+  accent: '#c75539',
+}
+
+const bookable: Room[] = [...rooms, cube]
 
 const reviews = [
   {
@@ -94,18 +126,29 @@ const reviews = [
   },
 ]
 
-const slots = ['10:00 am', '12:00 pm', '2:30 pm', '4:30 pm', '6:30 pm']
-const bookingUrl = 'https://www.btbescaperooms.co.nz/test/booking_widget.html'
+const slots = ['Afternoon', 'Early evening', 'Evening', 'Holiday daytime']
+// Relative to the site, so it works on btbescaperooms.co.nz and on btb-app.pages.dev
+const bookingUrl = '/test/booking_widget.html'
 
 function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [step, setStep] = useState(0)
-  const [selectedRoom, setSelectedRoom] = useState(rooms[0])
+  const [selectedRoom, setSelectedRoom] = useState<Room>(rooms[0])
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [players, setPlayers] = useState(3)
   const [firstName, setFirstName] = useState('')
   const [frontReview, setFrontReview] = useState<number | null>(null)
+
+  // Keep the nav sitting just below the preview notice, whatever height it wraps to
+  useEffect(() => {
+    const el = document.querySelector<HTMLElement>('.demo-notice')
+    if (!el) return
+    const set = () => document.documentElement.style.setProperty('--notice-h', `${el.offsetHeight}px`)
+    set()
+    window.addEventListener('resize', set)
+    return () => window.removeEventListener('resize', set)
+  }, [])
 
   const minDate = useMemo(
     () =>
@@ -137,6 +180,10 @@ function HomePage() {
 
   return (
     <main>
+      <div className="demo-notice" role="status">
+        <strong>Preview site:</strong> our main website and email are temporarily down, so this unfinished preview of our new site is standing in.
+        Questions? Call <a href="tel:0220537365">022 053 7365</a> or message us on <a href="https://www.facebook.com/btbescaperooms" target="_blank" rel="noreferrer">Facebook</a>.
+      </div>
       <nav className="site-nav" aria-label="Main navigation">
         <a className="brand" href="#top" aria-label="Beyond the Box home">
           <img src={asset('/images/btb-logo.png')} alt="" />
@@ -158,7 +205,8 @@ function HomePage() {
 
         <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
           <a href="#rooms" onClick={() => setMenuOpen(false)}>Rooms</a>
-          <a href="#experience" onClick={() => setMenuOpen(false)}>The experience</a>
+          <a href="#portable" onClick={() => setMenuOpen(false)}>Portable games</a>
+          <a href="#vr" onClick={() => setMenuOpen(false)}>VR chairs</a>
           <a href="#visit" onClick={() => setMenuOpen(false)}>Visit</a>
           <button className="nav-book" type="button" onClick={goToBooking}>
             Get tickets <Ticket size={17} />
@@ -180,7 +228,7 @@ function HomePage() {
             <em>Think beyond.</em>
           </h1>
           <p className="hero-copy reveal reveal-3">
-            Hand-built escape rooms, devious clues and wonderfully unexpected stories—made for teams who like their fun with a little mystery.
+            Escape rooms built and run right here in Hastings. Friendly for first-timers, and a real challenge for experienced players.
           </p>
           <div className="hero-actions reveal reveal-4">
             <button className="button primary" type="button" onClick={goToBooking}>
@@ -197,7 +245,7 @@ function HomePage() {
               {[0, 1, 2, 3, 4].map((star) => <Star key={star} size={13} fill="currentColor" />)}
             </span>
           </div>
-          <p>“Clever, satisfying and seriously good fun.”</p>
+          <p>“Professional and intriguing puzzles.”</p>
           <small>Google reviews</small>
         </div>
 
@@ -205,10 +253,10 @@ function HomePage() {
       </header>
 
       <section className="intro-strip" aria-label="Experience details">
-        <div><Clock3 /><span><strong>45–60</strong> minute adventures</span></div>
-        <div><Users /><span><strong>3–8</strong> players per room</span></div>
+        <div><Clock3 /><span><strong>60</strong> minute adventures</span></div>
+        <div><Users /><span><strong>2–8</strong> players</span></div>
         <div><MapPin /><span><strong>Hastings</strong> Hawke’s Bay</span></div>
-        <div><Puzzle /><span><strong>100%</strong> original puzzles</span></div>
+        <div><Puzzle /><span><strong>Local</strong> owned & run</span></div>
       </section>
 
       <section className="rooms-section" id="rooms">
@@ -217,7 +265,7 @@ function HomePage() {
             <p className="eyebrow dark"><span /> Case files</p>
             <h2>Pick your<br /><em>puzzle.</em></h2>
           </div>
-          <p>Every room is designed and built here in Hastings. No cookie-cutter puzzles—just layered stories, tactile surprises and satisfying breakthroughs.</p>
+          <p>Our rooms are set up and run by us here in Hastings, including Saving Christmas, which we designed and built from scratch. Expect hands-on puzzles, plenty of “aha!” moments and a friendly game master looking after you.</p>
         </div>
 
         <div className="room-grid">
@@ -226,7 +274,7 @@ function HomePage() {
               <div className="room-image-wrap">
                 <img src={room.image} alt={`${room.name} escape room`} />
                 <span className="case-number">0{index + 1}</span>
-                <span className="open-stamp">Open now</span>
+                <span className="open-stamp">{(room as Room).badge ?? 'Open now'}</span>
               </div>
               <div className="room-card-body">
                 <p>{room.kicker}</p>
@@ -254,12 +302,96 @@ function HomePage() {
         </div>
       </section>
 
+      <section className="rooms-section portable-section" id="portable">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow dark"><span /> Portable games</p>
+            <h2>Puzzles in<br /><em>a box.</em></h2>
+          </div>
+          <p>Self-contained escape games packed into a single box or chest. Play The Cube here at Beyond the Box, or bring Pirate’s Cove home for a pirate party.</p>
+        </div>
+
+        <div className="room-grid two">
+          <article className="room-card" style={{ '--room-accent': cube.accent } as React.CSSProperties}>
+            <div className="room-image-wrap">
+              <img src={cube.image} alt="The Cube portable escape game" />
+              <span className="open-stamp">Play at BtB</span>
+            </div>
+            <div className="room-card-body">
+              <p>{cube.kicker}</p>
+              <h3>{cube.name}</h3>
+              <div className="room-meta">
+                <span><Clock3 size={15} /> About an hour</span>
+                <span><Users size={15} /> {cube.players} players</span>
+                <span><Ticket size={15} /> $35 pp</span>
+              </div>
+              <p className="room-description">{cube.description} <em>Minimum cost of 3 players.</em></p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedRoom(cube)
+                  setPlayers(Math.min(Math.max(players, cube.minPlayers), cube.maxPlayers))
+                  setStep(1)
+                  goToBooking()
+                }}
+              >
+                Book The Cube <ArrowRight size={17} />
+              </button>
+            </div>
+          </article>
+
+          <article className="room-card" style={{ '--room-accent': piratesCove.accent } as React.CSSProperties}>
+            <div className="room-image-wrap">
+              <img src={piratesCove.image} alt="Pirate’s Cove treasure chest escape game" />
+              <span className="open-stamp">Hire it for home</span>
+            </div>
+            <div className="room-card-body">
+              <p>{piratesCove.kicker}</p>
+              <h3>{piratesCove.name}</h3>
+              <div className="room-meta">
+                <span><Clock3 size={15} /> {piratesCove.durationText}</span>
+                <span><MapPin size={15} /> At your house</span>
+                <span><Puzzle size={15} /> Pirate parties</span>
+              </div>
+              <p className="room-description">{piratesCove.description}</p>
+              <a className="card-link" href="tel:0220537365">
+                Call to hire Pirate’s Cove <ArrowRight size={17} />
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section className="vr-section" id="vr">
+        <div className="vr-copy">
+          <p className="eyebrow light"><span /> Virtual reality</p>
+          <h2>Strap in.<br /><em>Hold on.</em></h2>
+          <p className="lead">Climb into one of our VR chairs and get lost in another world. A quick thrill on its own, or the perfect add-on before or after your escape room.</p>
+          <img className="vr-photo" src={asset('/images/vr-chairs.jpg')} alt="Two people riding the VR chairs" />
+        </div>
+        <div className="vr-prices">
+          <div className="vr-price">
+            <Gamepad2 />
+            <small>Casual</small>
+            <strong>from $10</strong>
+            <span>per person, per ride</span>
+          </div>
+          <div className="vr-price featured">
+            <Clock3 />
+            <small>By the hour</small>
+            <strong>$150</strong>
+            <span>unlimited rides for your group</span>
+          </div>
+          <a className="button cream" href="tel:0220537365">Call to book VR <Phone size={18} /></a>
+        </div>
+      </section>
+
       <section className="experience-section" id="experience">
         <div className="experience-photo">
           <img src={asset('/images/experience.jpg')} alt="Players enjoying a Beyond the Box experience" />
           <div className="photo-note">
             <Puzzle size={20} />
-            <span><strong>Made here</strong>Original rooms. Local minds.</span>
+            <span><strong>Locally run</strong>Local rooms. Friendly faces.</span>
           </div>
         </div>
         <div className="experience-copy">
@@ -272,8 +404,8 @@ function HomePage() {
             <div><span>03</span><p><strong>Beat the clock</strong>Make your escape—or leave with a very good story either way.</p></div>
           </div>
           <div className="experience-extras">
-            <div><Gamepad2 /><span><strong>Also on site</strong>VR experiences</span></div>
-            <div><Puzzle /><span><strong>Take a seat</strong>Board game café</span></div>
+            <div><Gamepad2 /><span><strong>Also on site</strong>VR chairs</span></div>
+            <div><Puzzle /><span><strong>Grab a box</strong>Portable games</span></div>
           </div>
         </div>
       </section>
@@ -307,7 +439,7 @@ function HomePage() {
                   <p className="panel-kicker">Step 1 of 4</p>
                   <h3>Which case are you taking?</h3>
                   <div className="booking-room-list">
-                    {rooms.map((room) => (
+                    {bookable.map((room) => (
                       <button
                         type="button"
                         className={selectedRoom.id === room.id ? 'selected' : ''}
@@ -451,17 +583,16 @@ function HomePage() {
         </div>
         <div className="hours-card">
           <div className="hours-title"><Clock3 /><span><small>Opening hours</small>By appointment</span></div>
-          <div className="hours-row"><span>Tuesday – Friday</span><strong>3:00 pm – 8:30 pm</strong></div>
-          <div className="hours-row"><span>Saturday</span><strong>10:00 am – 8:30 pm</strong></div>
-          <div className="hours-row"><span>School & public holidays</span><strong>9:00 am – 8:30 pm</strong></div>
+          <div className="hours-row"><span>Open</span><strong>3:15 pm – 8:30 pm</strong></div>
+          <div className="hours-row"><span>School & public holidays</span><strong>10:00 am – 8:30 pm</strong></div>
           <p>Need another time? Give us a call and we’ll see what we can do.</p>
           <button className="button cream" type="button" onClick={goToBooking}>Build your ticket <Ticket size={18} /></button>
         </div>
       </section>
 
       <footer className="site-footer">
-        <div className="footer-brand"><img src={asset('/images/btb-logo.png')} alt="Beyond the Box" /><p>Original escape rooms, built with curiosity in Hastings, New Zealand.</p></div>
-        <div><strong>Explore</strong><a href="#rooms">Escape rooms</a><a href="#experience">How it works</a><a href="#book">Book a session</a></div>
+        <div className="footer-brand"><img src={asset('/images/btb-logo.png')} alt="Beyond the Box" /><p>Escape rooms, portable games and VR, run by us in Hastings, New Zealand.</p></div>
+        <div><strong>Explore</strong><a href="#rooms">Escape rooms</a><a href="#portable">Portable games</a><a href="#vr">VR chairs</a><a href="#book">Book a session</a></div>
         <div><strong>Visit</strong><a href="#visit">Opening hours</a><a href="tel:0220537365">022 053 7365</a><a href="https://www.facebook.com/btbescaperooms" target="_blank" rel="noreferrer">Facebook</a></div>
         <div className="footer-ticket"><Ticket /><span><small>Room entry from</small><strong>$35</strong> per person</span></div>
         <p className="copyright">© {new Date().getFullYear()} Beyond the Box Escape Rooms</p>
