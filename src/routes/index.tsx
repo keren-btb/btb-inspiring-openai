@@ -135,7 +135,7 @@ const bookingUrl = '/test/booking_widget.html'
 
 
 // ---- Board games: live list of games for sale, straight from the BtB app's POS products ----
-// Uses the public (anon) key that the booking widget already uses; only name + price are requested.
+// Uses the public (anon) key that the booking widget already uses.
 const SB_URL = 'https://dcksohetvlonijtcbjwe.supabase.co'
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRja3NvaGV0dmxvbmlqdGNiandlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NTQ1NzgsImV4cCI6MjA5NjQzMDU3OH0.M_oDB2e0upZUYZijNmigsmXtcKaAFx8iF-nn5FZUkzk'
 type ShopGame = { name: string; sell_price: number }
@@ -147,8 +147,8 @@ function BoardGamesSection() {
   const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
-    const url = `${SB_URL}/rest/v1/products?select=name,sell_price&category=eq.Boardgame&active=eq.true&stock_qty=gt.0&sell_price=gt.0&order=name`
-    fetch(url, { headers: { apikey: SB_ANON, Authorization: `Bearer ${SB_ANON}` } })
+    // public_board_games() returns only name + sell_price of in-stock games (see btb-app/sql)
+    fetch(`${SB_URL}/rest/v1/rpc/public_board_games`, { headers: { apikey: SB_ANON, Authorization: `Bearer ${SB_ANON}` } })
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((rows: ShopGame[]) => setGames(rows))
       .catch(() => setFailed(true))
