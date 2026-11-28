@@ -12,7 +12,7 @@ export const Route = createRootRoute({
         content:
           'Escape rooms, escape rooms in a box, VR chairs and board games for sale (new & secondhand) in Hastings, Hawke’s Bay. Friendly for first-timers, challenging for experienced players.',
       },
-      { name: 'theme-color', content: import.meta.env.VITE_THEME === 'fun' ? '#1e2350' : '#1f3029' },
+      { name: 'theme-color', content: import.meta.env.VITE_THEME === 'fun' ? '#1e2350' : '#1b2a45' },
       // Preview site only: keep it out of Google so it never competes with btbescaperooms.co.nz
       { name: 'robots', content: 'noindex, nofollow' },
       // Facebook / social link preview (always points at the current version)
