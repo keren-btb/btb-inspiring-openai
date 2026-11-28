@@ -1966,3 +1966,16 @@ html { scroll-padding-top: 126px; }
   .lk-count { grid-template-columns: repeat(6, 1fr); }
   .lk-seq span, .lk-seq strong { font-size: 20px; min-width: 32px; }
 }
+
+/* Brand teal boost (Nov 2026) */
+:root { --teal-deep: #05808c; }
+.section-heading h2 em, .experience-list > div > span, .panel-kicker, .date-field svg, .player-control button, .quote-mark { color: var(--teal-deep); }
+.hero-proof { border-left-color: var(--teal); }
+.scroll-note span { background: var(--teal); }
+.photo-note, .hours-card { background: var(--teal-deep); }
+.intro-strip { background: var(--teal); border-bottom-color: transparent; }
+.intro-strip > div { border-right-color: rgba(19, 30, 51, 0.18); }
+.intro-strip svg, .intro-strip strong { color: var(--forest-deep); }
+.intro-strip span { color: rgba(19, 30, 51, 0.75); }
+.site-footer { border-top: 4px solid var(--teal); }
+.hero h1 em { color: var(--teal); }
